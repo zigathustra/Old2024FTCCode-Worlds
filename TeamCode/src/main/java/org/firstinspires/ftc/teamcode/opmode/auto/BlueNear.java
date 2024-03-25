@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmode.auto;
+
 import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -17,13 +18,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
-@Autonomous(name = "BlueNear", group = "Autonomous")
+@Autonomous(name = "blueAuto", group = "Autonomous")
 public class BlueNear extends LinearOpMode {
     public class Lift {
         private DcMotorEx lift;
 
         public Lift(HardwareMap hardwareMap) {
-            lift = hardwareMap.get(DcMotorEx.class, "liftMotor");
+            lift = hardwareMap.get(DcMotorEx.class, "lift");
             lift.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
             lift.setDirection(DcMotorSimple.Direction.FORWARD);
         }
@@ -34,13 +35,13 @@ public class BlueNear extends LinearOpMode {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 if (!initialized) {
-                    lift.setPower(0.8);
+                    lift.setPower(0.4);
                     initialized = true;
                 }
 
                 double pos = lift.getCurrentPosition();
                 packet.put("liftPos", pos);
-                if (pos < 3000.0) {
+                if (pos < 2500.0) {
                     return true;
                 } else {
                     lift.setPower(0);
@@ -58,7 +59,7 @@ public class BlueNear extends LinearOpMode {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 if (!initialized) {
-                    lift.setPower(-0.8);
+                    lift.setPower(-0.5);
                     initialized = true;
                 }
 
@@ -81,7 +82,7 @@ public class BlueNear extends LinearOpMode {
         private Servo claw;
 
         public Claw(HardwareMap hardwareMap) {
-            claw = hardwareMap.get(Servo.class, "claw");
+            claw = hardwareMap.get(Servo.class, "grabber");
         }
 
         public class CloseClaw implements Action {
@@ -98,7 +99,7 @@ public class BlueNear extends LinearOpMode {
         public class OpenClaw implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                claw.setPosition(1.0);
+                claw.setPosition(0.0);
                 return false;
             }
         }

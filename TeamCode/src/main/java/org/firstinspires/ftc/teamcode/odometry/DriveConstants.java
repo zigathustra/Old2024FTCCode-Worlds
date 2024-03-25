@@ -22,6 +22,7 @@ public class DriveConstants {
     /*
      * These are motor constants that should be listed online for your motors.
      */
+    // Values for GoBilda 312 RPM
     public static final double TICKS_PER_REV = 537.7;
     public static final double MAX_RPM = 312;
 
