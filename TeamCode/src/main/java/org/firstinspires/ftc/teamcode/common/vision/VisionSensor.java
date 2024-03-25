@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainCon
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.firstinspires.ftc.teamcode.common.types.*;
+import org.firstinspires.ftc.teamcode.common.enums.*;
 import org.firstinspires.ftc.teamcode.common.config.Constants;
 
 import java.util.List;

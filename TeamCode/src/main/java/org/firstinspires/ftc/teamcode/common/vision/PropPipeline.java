@@ -5,8 +5,8 @@ import android.graphics.Canvas;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
-import org.firstinspires.ftc.teamcode.common.types.Alliance;
-import org.firstinspires.ftc.teamcode.common.types.PropDirection;
+import org.firstinspires.ftc.teamcode.common.enums.Alliance;
+import org.firstinspires.ftc.teamcode.common.enums.PropDirection;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
