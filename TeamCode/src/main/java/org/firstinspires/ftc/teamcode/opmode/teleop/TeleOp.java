@@ -1,16 +1,18 @@
-package org.firstinspires.ftc.teamcode.opmode.teleop;
+package org.firstinspires.ftc.teamcode.opmode.common;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.teleop.TeleOpBot;
+//import org.firstinspires.ftc.teamcode.common.TeleOpBot;
 
-@TeleOp(name = "TeleoOp528", group = "Linear OpMode")
-public class TeleOp528 extends LinearOpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleoOp", group = "Linear OpMode")
+public class TeleOp extends LinearOpMode {
+/*
     private TeleOpBot bot = null;
 
     @Override
-    public void runOpMode() {
+    */
+    public void runOpMode() {}
+        /*
         double driveAxial = 0.0;
         double driveStrafe = 0.0;
         double driveYaw = 0.0;
@@ -82,4 +84,5 @@ public class TeleOp528 extends LinearOpMode {
             }
         }
     }
+    */
 }
