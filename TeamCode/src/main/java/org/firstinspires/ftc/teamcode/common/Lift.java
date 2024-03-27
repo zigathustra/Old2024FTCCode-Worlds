@@ -33,8 +33,16 @@ public class Lift {
 
     }
 
+    private void logPosition()
+    {
+        opMode.telemetry.addData("PositionL:  ", liftMotorL.getCurrentPosition());
+        opMode.telemetry.addData("PositionR:  ", liftMotorR.getCurrentPosition());
+
+        opMode.telemetry.update();
+    }
     public void stop() {
         stopAtPosition(liftMotorL.getCurrentPosition());
+        logPosition();
     }
 
     public void liftUp(double targetSpeed) {
@@ -49,11 +57,7 @@ public class Lift {
         } else {
             opMode.telemetry.addData("Stopped at Top: ", "false");
         }
-        opMode.telemetry.addData("PositionL:  ", liftMotorL.getCurrentPosition());
-        opMode.telemetry.addData("PositionR:  ", liftMotorL.getCurrentPosition());
-
-        opMode.telemetry.update();
-
+        logPosition();
     }
 
     public void liftDown(double targetSpeed) {
@@ -68,10 +72,7 @@ public class Lift {
         } else {
             opMode.telemetry.addData("Stopped at Bottom: ", " false");
         }
-        opMode.telemetry.addData("PositionL:  ", liftMotorL.getCurrentPosition());
-        opMode.telemetry.addData("PositionR:  ", liftMotorR.getCurrentPosition());
-
-        opMode.telemetry.update();
+        logPosition();
     }
 
     private boolean stoppedAtTop() {
@@ -104,12 +105,14 @@ public class Lift {
         liftMotorL.setPower(Constants.liftStopPowerFactor);
         liftMotorR.setPower(Constants.liftStopPowerFactor);
 
+        logPosition();
     }
     public void liftZero(){
 //        liftDown(0.2);
 //        while (!lift_sensor.isPressed()){
 //        }
 //        stop();
+        //Move lift to zero position by detecting current spike
         liftMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
