@@ -10,17 +10,16 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
+
 import org.firstinspires.ftc.teamcode.odometry.MecanumDrive;
 
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
-@Autonomous(name = "blueAuto", group = "Autonomous")
-public class BlueNear extends LinearOpMode {
-    public class Lift {
+@Autonomous(name = "blueAutoTest", group = "Autonomous")
+public class BlueAutoTest extends LinearOpMode {
+/*    public class Lift {
         private DcMotorEx lift;
 
         public Lift(HardwareMap hardwareMap) {
@@ -77,45 +76,45 @@ public class BlueNear extends LinearOpMode {
             return new LiftDown();
         }
     }
+*/
+    public class Grabber {
+        private Servo grabber;
 
-    public class Claw {
-        private Servo claw;
-
-        public Claw(HardwareMap hardwareMap) {
-            claw = hardwareMap.get(Servo.class, "grabber");
+        public Grabber(HardwareMap hardwareMap) {
+            grabber = hardwareMap.get(Servo.class, "grabber");
         }
 
-        public class CloseClaw implements Action {
+        public class CloseGrabber implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                claw.setPosition(0.55);
+                grabber.setPosition(0.55);
                 return false;
             }
         }
-        public Action closeClaw() {
-            return new CloseClaw();
+        public Action closeGrabber() {
+            return new CloseGrabber();
         }
 
-        public class OpenClaw implements Action {
+        public class OpenGrabber implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                claw.setPosition(0.0);
+                grabber.setPosition(0.0);
                 return false;
             }
         }
-        public Action openClaw() {
-            return new OpenClaw();
+        public Action openGrabber() {
+            return new OpenGrabber();
         }
     }
 
     @Override
     public void runOpMode() {
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(11.8, 61.7, Math.toRadians(90)));
-        Claw claw = new Claw(hardwareMap);
-        Lift lift = new Lift(hardwareMap);
+        Grabber grabber = new Grabber(hardwareMap);
+ //       Lift lift = new Lift(hardwareMap);
 
-        // vision here that outputs position
-        int visionOutputPosition = 1;
+        // the prop position, determined by vision sensor
+        int propPosition = 1;
 
         Action trajectoryAction1;
         Action trajectoryAction2;
@@ -154,16 +153,15 @@ public class BlueNear extends LinearOpMode {
                 .build();
 
         // actions that need to happen on init; for instance, a claw tightening.
-        Actions.runBlocking(claw.closeClaw());
-
+        Actions.runBlocking(grabber.closeGrabber());
 
         while (!isStopRequested() && !opModeIsActive()) {
-            int position = visionOutputPosition;
+            int position = propPosition;
             telemetry.addData("Position during Init", position);
             telemetry.update();
         }
 
-        int startPosition = visionOutputPosition;
+        int startPosition = propPosition;
         telemetry.addData("Starting Position", startPosition);
         telemetry.update();
         waitForStart();
@@ -182,9 +180,9 @@ public class BlueNear extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         trajectoryActionChosen,
-                        lift.liftUp(),
-                        claw.openClaw(),
-                        lift.liftDown(),
+//                        lift.liftUp(),
+                        grabber.openGrabber(),
+//                        lift.liftDown(),
                         trajectoryActionCloseOut
                 )
         );
