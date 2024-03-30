@@ -2,87 +2,80 @@ package org.firstinspires.ftc.teamcode.opmode.common;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-//import org.firstinspires.ftc.teamcode.common.TeleOpBot;
+import org.firstinspires.ftc.teamcode.common.TeleOpDriveTrain;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleoOp", group = "Linear OpMode")
 public class TeleOp extends LinearOpMode {
-/*
-    private TeleOpBot bot = null;
+
+    private TeleOpDriveTrain driveTrain = null;
 
     @Override
-    */
-    public void runOpMode() {}
-        /*
+    public void runOpMode() {
+
         double driveAxial = 0.0;
         double driveStrafe = 0.0;
         double driveYaw = 0.0;
         double leftTrigger = 0.0;
         double rightTrigger = 0.0;
-
-        bot = new TeleOpBot(this);
-        bot.wristMiddle();
+        driveTrain = new TeleOpDriveTrain(this);
         waitForStart();
 
         while (opModeIsActive()&&!gamepad1.ps) {
 
-//            if (gamepad1.left_bumper) {
-//                bot.setToSlowedSpeed();
-//            } else {
-//                bot.setToFastSpeed();
-//            }
             if (gamepad1.dpad_up) {
-                bot.creepDirection(1.0, 0.0, 0.0);
+                driveTrain.creepDirection(1.0, 0.0, 0.0);
             } else if (gamepad1.dpad_down) {
-                bot.creepDirection(-1.0, 0.0, 0.0);
+                driveTrain.creepDirection(-1.0, 0.0, 0.0);
             } else if (gamepad1.dpad_left) {
-                bot.creepDirection(0.0, 1.0, 0.0);
+                driveTrain.creepDirection(0.0, 1.0, 0.0);
             } else if (gamepad1.dpad_right) {
-                bot.creepDirection(0.0, -1.0, 0.0);
+                driveTrain.creepDirection(0.0, -1.0, 0.0);
             } else {
                 driveAxial = gamepad1.left_stick_y;
                 driveStrafe = gamepad1.left_stick_x;
                 driveYaw = gamepad1.right_stick_x;
                 if ((Math.abs(driveAxial) < 0.2) && (Math.abs(driveStrafe) < 0.2) && (Math.abs(driveYaw) < 0.2)) {
-                    bot.stopDrive();
+                    driveTrain.stop();
                 } else
-                    bot.moveDirection(-driveAxial, -driveStrafe, -driveYaw);
+                    driveTrain.moveDirection(-driveAxial, -driveStrafe, -driveYaw);
             }
 
-            leftTrigger = gamepad1.left_trigger;
+/*            leftTrigger = gamepad1.left_trigger;
             rightTrigger = gamepad1.right_trigger;
             if (leftTrigger > 0.3) {
-                bot.liftDown(leftTrigger);
+                driveTrain.liftDown(leftTrigger);
             } else if (rightTrigger > 0.3) {
-                bot.liftUp(rightTrigger);
+                driveTrain.liftUp(rightTrigger);
             } else {
-                bot.liftStop();
+                driveTrain.liftStop();
             }
 
             if (gamepad1.x) {
-                bot.grabberClose();
+                driveTrain.grabberClose();
             } else if (gamepad1.a) {
-                bot.grabberOpen();
+                driveTrain.grabberOpen();
             }
 
             if (gamepad1.b) {
-                bot.wristUp();
+                driveTrain.wristUp();
             } else if (gamepad1.y) {
-                bot.wristMiddle();
+                driveTrain.wristMiddle();
             }
             if (gamepad1.share && gamepad1.start) {
-                bot.liftZero();
+                driveTrain.liftZero();
             }
             if(gamepad1.start){
-                bot.launcherUnlocked();
+                driveTrain.launcherUnlocked();
             } else if(gamepad1.share) {
-                bot.launcherLocked();
+                driveTrain.launcherLocked();
             }
             if(gamepad1.right_bumper){
-                bot.pokeyUp();
+                driveTrain.pokeyUp();
             }else if(gamepad1.left_bumper){
-                bot.pokeyDown();
+                driveTrain.pokeyDown();
             }
+
+ */
         }
     }
-    */
 }
