@@ -1,13 +1,21 @@
 package org.firstinspires.ftc.teamcode.opmode.common;
 
+import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.common.Intake;
 import org.firstinspires.ftc.teamcode.common.TeleOpDriveTrain;
+import org.firstinspires.ftc.teamcode.common.Lift;
+@Config
+@TeleOp(name = "TeleOpNormal", group = "Linear OpMode")
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleoOp", group = "Linear OpMode")
-public class TeleOp extends LinearOpMode {
+public class TeleOpNormal extends LinearOpMode {
 
     private TeleOpDriveTrain driveTrain = null;
+    private Intake intake = null;
+    private Lift lift = null;
 
     @Override
     public void runOpMode() {
@@ -17,11 +25,14 @@ public class TeleOp extends LinearOpMode {
         double driveYaw = 0.0;
         double leftTrigger = 0.0;
         double rightTrigger = 0.0;
+        boolean liftStopped = true;
         driveTrain = new TeleOpDriveTrain(this);
+        intake = new Intake(this);
+        lift = new Lift(this);
         waitForStart();
 
         while (opModeIsActive()&&!gamepad1.ps) {
-
+            // Drivetrain
             if (gamepad1.dpad_up) {
                 driveTrain.creepDirection(1.0, 0.0, 0.0);
             } else if (gamepad1.dpad_down) {
@@ -40,16 +51,36 @@ public class TeleOp extends LinearOpMode {
                     driveTrain.moveDirection(-driveAxial, -driveStrafe, -driveYaw);
             }
 
-/*            leftTrigger = gamepad1.left_trigger;
-            rightTrigger = gamepad1.right_trigger;
-            if (leftTrigger > 0.3) {
-                driveTrain.liftDown(leftTrigger);
-            } else if (rightTrigger > 0.3) {
-                driveTrain.liftUp(rightTrigger);
-            } else {
-                driveTrain.liftStop();
+            // Intake
+            if(gamepad1.right_bumper){
+                intake.lower();
+                intake.forward();
+            }else if(gamepad1.left_bumper){
+                intake.raise();
+                intake.stop();
             }
 
+            // Lift
+            leftTrigger = gamepad1.left_trigger;
+            rightTrigger = gamepad1.right_trigger;
+            if (leftTrigger > 0.3) {
+                lift.liftDown(0.35);
+                liftStopped = false;
+            } else if (rightTrigger > 0.3) {
+                lift.liftUp(0.35);
+                liftStopped = false;
+            } else if (!liftStopped){
+                lift.stop();
+                liftStopped = true;
+            }
+
+            // Shoulder
+
+            // Dropper
+
+            // Launcher
+
+/*
             if (gamepad1.x) {
                 driveTrain.grabberClose();
             } else if (gamepad1.a) {

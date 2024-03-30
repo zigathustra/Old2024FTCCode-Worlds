@@ -37,6 +37,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
+
+import org.firstinspires.ftc.teamcode.common.config.Constants;
 import org.firstinspires.ftc.teamcode.odometry.Drawing;
 import org.firstinspires.ftc.teamcode.odometry.Localizer;
 import org.firstinspires.ftc.teamcode.odometry.ThreeDeadWheelLocalizer;
@@ -56,16 +58,14 @@ import java.util.List;
 public final class AutoDriveTrain {
     public static class Params {
         // IMU orientation
-        // TODO: fill in these values based on
-        //   see https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html?highlight=imu#physical-hub-mounting
         public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
-                RevHubOrientationOnRobot.LogoFacingDirection.UP;
+                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
 
         // drive model parameters
-        public double inPerTick = 1;
-        public double lateralInPerTick = inPerTick;
+        public double inPerTick = 1.0/Constants.mecanumMoveCountsPerInch;
+        public double lateralInPerTick = 1.0/Constants.mecanumStrafeCountsPerInch;
         public double trackWidthTicks = 0;
 
         // feedforward parameters (in tick units)
@@ -221,20 +221,20 @@ public final class AutoDriveTrain {
 
         // TODO: make sure your config has motors with these names (or change them)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
-        rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        leftFront = hardwareMap.get(DcMotorEx.class, "leftFrontDrive");
+        leftBack = hardwareMap.get(DcMotorEx.class, "leftBackDrive");
+        rightBack = hardwareMap.get(DcMotorEx.class, "rightBackDrive");
+        rightFront = hardwareMap.get(DcMotorEx.class, "rightFrontDrive");
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftFront.setDirection(DcMotorEx.Direction.REVERSE);
-        leftBack.setDirection(DcMotorEx.Direction.REVERSE);
-//        rightFront.setDirection(DcMotorEx.Direction.REVERSE);
-//        rightBack.setDirection(DcMotorEx.Direction.REVERSE);
+        leftFront.setDirection(Constants.drivetrainLeftFrontDriveDirection);
+        leftBack.setDirection(Constants.drivetrainLeftBackDriveDirection);
+        rightFront.setDirection(Constants.drivetrainRightFrontDriveDirection);
+        rightBack.setDirection(Constants.drivetrainRightBackDriveDirection);
 
 
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)

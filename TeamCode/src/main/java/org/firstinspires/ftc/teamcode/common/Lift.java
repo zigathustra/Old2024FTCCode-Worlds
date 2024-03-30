@@ -9,17 +9,15 @@ import org.firstinspires.ftc.teamcode.common.config.Constants;
 
 public class Lift {
     private final DcMotorEx liftMotorL, liftMotorR;
-//    protected TouchSensor lift_sensor = null;
     private LinearOpMode opMode;
 
     public Lift(LinearOpMode opMode) {
         this.opMode = opMode;
 
-//        lift_sensor = opMode.hardwareMap.get(TouchSensor.class, "lift_sensor");
-        liftMotorL = opMode.hardwareMap.get(DcMotorEx.class, "liftL");
-        liftMotorR = opMode.hardwareMap.get(DcMotorEx.class, "liftR");
+        liftMotorL = opMode.hardwareMap.get(DcMotorEx.class, "liftLeft");
+        liftMotorR = opMode.hardwareMap.get(DcMotorEx.class, "liftRight");
 
-        liftMotorL.setDirection(DcMotor.Direction.REVERSE);
+        liftMotorL.setDirection(DcMotor.Direction.FORWARD);
         liftMotorR.setDirection(DcMotor.Direction.REVERSE);
 
         liftMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -30,7 +28,6 @@ public class Lift {
 
         liftMotorL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftMotorR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
     }
 
     private void logPosition()

@@ -13,44 +13,44 @@ import org.firstinspires.ftc.teamcode.common.config.Constants;
 public class TeleOpDriveTrain{
     private DcMotorEx leftFrontDrive = null;
     private DcMotorEx rightFrontDrive = null;
-    private DcMotorEx leftRearDrive = null;
-    private DcMotorEx rightRearDrive = null;
-    private double maxSpeed = Constants.maxTeleOpSpeedNormal;
-    private IMU imu = null;
+    private DcMotorEx leftBackDrive = null;
+    private DcMotorEx rightBackDrive = null;
+    private double maxSpeed = Constants.maxTeleOpNormalSpeed;
+//    private IMU imu = null;
     LinearOpMode opMode = null;
 
     public TeleOpDriveTrain(LinearOpMode opMode) {
         this.opMode = opMode;
 
         leftFrontDrive = opMode.hardwareMap.get(DcMotorEx.class, "leftFrontDrive");
-        leftRearDrive = opMode.hardwareMap.get(DcMotorEx.class, "leftRearDrive");
+        leftBackDrive = opMode.hardwareMap.get(DcMotorEx.class, "leftBackDrive");
         rightFrontDrive = opMode.hardwareMap.get(DcMotorEx.class, "rightFrontDrive");
-        rightRearDrive = opMode.hardwareMap.get(DcMotorEx.class, "rightRearDrive");
+        rightBackDrive = opMode.hardwareMap.get(DcMotorEx.class, "rightBackDrive");
 
-        leftFrontDrive.setDirection(Constants.drivetrainLeftFrontDirection);
-        leftRearDrive.setDirection(Constants.drivetrainLeftRearDirection);
-        rightFrontDrive.setDirection(Constants.drivetrainRightFrontDirection);
-        rightRearDrive.setDirection(Constants.drivetrainRightRearDirection);
+        leftFrontDrive.setDirection(Constants.drivetrainLeftFrontDriveDirection);
+        leftBackDrive.setDirection(Constants.drivetrainLeftBackDriveDirection);
+        rightFrontDrive.setDirection(Constants.drivetrainRightFrontDriveDirection);
+        rightBackDrive.setDirection(Constants.drivetrainRightBackDriveDirection);
 
-        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
-        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
-        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+//        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
+//        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+//        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
-        imu = opMode.hardwareMap.get(IMU.class, "imu");
-        imu.initialize(new IMU.Parameters(orientationOnRobot));
-        imu.resetYaw();
+//        imu = opMode.hardwareMap.get(IMU.class, "imu");
+//        imu.initialize(new IMU.Parameters(orientationOnRobot));
+//        imu.resetYaw();
 
         setBrakingOn();
     }
 
     public void setToNormalSpeed()
     {
-        this.maxSpeed = Constants.maxTeleOpSpeedNormal;
+        this.maxSpeed = Constants.maxTeleOpNormalSpeed;
     }
 
     public void setToSlowedSpeed()
     {
-        this.maxSpeed = Constants.maxTeleOpSpeedSlowed;
+        this.maxSpeed = Constants.maxTeleOpSlowedSpeed;
     }
 
     public void creepDirection(double axial, double strafe, double yaw) {
@@ -61,49 +61,49 @@ public class TeleOpDriveTrain{
         // Calculate wheel powers.
         double leftFrontPower = axial - strafe - yaw;
         double rightFrontPower = axial + strafe + yaw;
-        double leftRearPower = axial + strafe - yaw;
-        double rightRearPower = axial - strafe + yaw;
+        double leftBackPower = axial + strafe - yaw;
+        double rightBackPower = axial - strafe + yaw;
 
         // Normalize wheel powers to be less than 1.0
         double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-        max = Math.max(max, Math.abs(leftRearPower));
-        max = Math.max(max, Math.abs(rightRearPower));
+        max = Math.max(max, Math.abs(leftBackPower));
+        max = Math.max(max, Math.abs(rightBackPower));
 
         if (max > 1.0) {
             leftFrontPower /= max;
             rightFrontPower /= max;
-            leftRearPower /= max;
-            rightRearPower /= max;
+            leftBackPower /= max;
+            rightBackPower /= max;
         }
 
         leftFrontDrive.setPower(leftFrontPower * maxSpeed);
         rightFrontDrive.setPower(rightFrontPower * maxSpeed);
-        leftRearDrive.setPower(leftRearPower * maxSpeed);
-        rightRearDrive.setPower(rightRearPower * maxSpeed);
+        leftBackDrive.setPower(leftBackPower * maxSpeed);
+        rightBackDrive.setPower(rightBackPower * maxSpeed);
     }
-    
-    public double getHeading() {
-        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-    }
+
+//    public double getHeading() {
+//        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+//    }
 
     public void stop() {
         leftFrontDrive.setPower(0.0);
-        leftRearDrive.setPower(0.0);
+        leftBackDrive.setPower(0.0);
         rightFrontDrive.setPower(0.0);
-        rightRearDrive.setPower(0.0);
+        rightBackDrive.setPower(0.0);
     }
 
     private void setBrakingOn() {
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftRearDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightRearDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     private void setBrakingOff() {
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        leftRearDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        rightRearDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 }
