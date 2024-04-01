@@ -58,6 +58,57 @@ public class Bot extends Component {
 
     }
 
+    public void loadPixel()
+    {
+
+    }
+
+    public void dropPixel()
+    {
+        dropper.dropPixel();
+    }
+    public void dropperDeploy()
+    {
+
+    }
+
+    public void dropperRetract()
+    {
+
+    }
+
+    public void intakeDeploy()
+    {
+        intake.deploy();
+    }
+
+    public void intakeRetract()
+    {
+        intake.retract();
+    }
+    public void liftUp(double speed)
+    {
+        lift.up(speed);
+    }
+
+    public void liftDown(double speed)
+    {
+        lift.down(speed);
+    }
+
+    public void liftStop()
+    {
+    }
+
+    public void launcherLock()
+    {
+        launcher.setPosition(launcherLockPos);
+    }
+    public void launcherRelease()
+    {
+        launcher.setPosition(launcherReleasePos);
+    }
+
     public void update()
     {
         lift.tick();

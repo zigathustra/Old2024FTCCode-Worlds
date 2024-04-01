@@ -60,10 +60,10 @@ public final class TuningOpModes {
                 List<Encoder> parEncs = new ArrayList<>(), perpEncs = new ArrayList<>();
                 if (md.localizer instanceof AutoDrivetrain.DriveLocalizer) {
                     AutoDrivetrain.DriveLocalizer dl = (AutoDrivetrain.DriveLocalizer) md.localizer;
-                    leftEncs.add(dl.leftFront);
-                    leftEncs.add(dl.leftBack);
-                    rightEncs.add(dl.rightFront);
-                    rightEncs.add(dl.rightBack);
+                    leftEncs.add(dl.leftFrontEncoder);
+                    leftEncs.add(dl.leftBackEncoder);
+                    rightEncs.add(dl.rightFrontEncoder);
+                    rightEncs.add(dl.rightBackEncoder);
                 } else if (md.localizer instanceof ThreeDeadWheelLocalizer) {
                     ThreeDeadWheelLocalizer dl = (ThreeDeadWheelLocalizer) md.localizer;
                     parEncs.add(dl.par0);
@@ -85,12 +85,12 @@ public final class TuningOpModes {
                         AutoDrivetrain.PARAMS.maxProfileAccel,
                         hardwareMap.getAll(LynxModule.class),
                         Arrays.asList(
-                                md.leftFront,
-                                md.leftBack
+                                md.leftFrontDrive,
+                                md.leftBackDrive
                         ),
                         Arrays.asList(
-                                md.rightFront,
-                                md.rightBack
+                                md.rightFrontDrive,
+                                md.rightBackDrive
                         ),
                         leftEncs,
                         rightEncs,

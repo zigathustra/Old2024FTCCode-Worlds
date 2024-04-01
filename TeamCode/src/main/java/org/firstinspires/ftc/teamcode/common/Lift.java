@@ -25,9 +25,11 @@ public class Lift {
     private final int deployPos = 300;
     private final int maxPos = 1000;
     private final int minPos = 200;
-    private int targetPos;
+    private final int defaultPosition = 250;
+    private int targetPos = defaultPosition;
 
-    private final double maxSpeed = 0.5;
+    private final double defaultMaxSpeed = 0.5;
+    private double maxSpeed = defaultMaxSpeed;
 
     public Lift(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -46,26 +48,34 @@ public class Lift {
 
         liftMotorL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftMotorR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        setTargetPos(retractPos);
     }
 
     public void tick()
     {
         //setPIDMotorPower();
     }
-    public void up() {
+    public void up(double speed) {
+        maxSpeed = speed;
         if (!atTop()) {
             targetPos++;
         }
         logPosition();
     }
 
-    public void down(double targetSpeed) {
+    public void down(double speed) {
+        maxSpeed = speed;
         if (!atBottom()) {
             targetPos--;
         }
         logPosition();
     }
 
+    public void stop()
+    {
+        maxSpeed = 0;
+    }
     private boolean atTop() {
         if (liftMotorL.getCurrentPosition() >= maxPos) {
             return true;

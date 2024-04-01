@@ -17,7 +17,7 @@ public class LocalizationTest extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         if (TuningOpModes.DRIVE_CLASS.equals(AutoDrivetrain.class)) {
-            AutoDrivetrain drive = new AutoDrivetrain(hardwareMap, telemetry, new Pose2d(0, 0, 0));
+            AutoDrivetrain drive = new AutoDrivetrain(hardwareMap, new Pose2d(0, 0, 0));
 
             waitForStart();
 

@@ -10,10 +10,10 @@ import org.firstinspires.ftc.teamcode.common.config.Constants;
 
 public class Drivetrain {
     protected Telemetry telemetry;
-    protected final DcMotorEx leftFrontDrive;
-    protected final DcMotorEx rightFrontDrive;
-    protected final DcMotorEx leftBackDrive;
-    protected final DcMotorEx rightBackDrive;
+    public final DcMotorEx leftFrontDrive;
+    public final DcMotorEx rightFrontDrive;
+    public final DcMotorEx leftBackDrive;
+    public final DcMotorEx rightBackDrive;
     protected final double maxNormalSpeed = 0.75;
     protected final double maxSlowedSpeed = 0.5;
     protected final double maxCreepSpeed = 0.15;

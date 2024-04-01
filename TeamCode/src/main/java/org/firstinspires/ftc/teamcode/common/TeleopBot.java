@@ -19,7 +19,7 @@ public class TeleopBot extends Bot {
     public void moveDirection(double axial, double strafe, double yaw) {
         drivetrain.moveDirection(axial, strafe, yaw);
     }
-    public void stop() {
+    public void stopDrive() {
         drivetrain.stop();
     }
 }
