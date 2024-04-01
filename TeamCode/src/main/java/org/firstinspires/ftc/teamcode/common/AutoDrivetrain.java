@@ -32,8 +32,6 @@ import com.acmerobotics.roadrunner.ftc.PositionVelocityPair;
 import com.acmerobotics.roadrunner.ftc.RawEncoder;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -55,7 +53,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Config
-public final class AutoDriveTrain {
+public class AutoDrivetrain extends Drivetrain{
     public static class Params {
         // IMU orientation
         public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
@@ -106,9 +104,7 @@ public final class AutoDriveTrain {
             ));
     public final AccelConstraint defaultAccelConstraint =
             new ProfileAccelConstraint(PARAMS.minProfileAccel, PARAMS.maxProfileAccel);
-
-    public final DcMotorEx leftFront, leftBack, rightBack, rightFront;
-
+    
     public final VoltageSensor voltageSensor;
 
     public final LazyImu lazyImu;
@@ -124,7 +120,7 @@ public final class AutoDriveTrain {
     private final DownsampledWriter mecanumCommandWriter = new DownsampledWriter("MECANUM_COMMAND", 50_000_000);
 
     public class DriveLocalizer implements Localizer {
-        public final Encoder leftFront, leftBack, rightBack, rightFront;
+        public final Encoder leftFrontEncoder, leftBackEncoder, rightBackEncoder, rightFrontEncoder;
         public final IMU imu;
 
         private int lastLeftFrontPos, lastLeftBackPos, lastRightBackPos, lastRightFrontPos;
@@ -132,26 +128,26 @@ public final class AutoDriveTrain {
         private boolean initialized;
 
         public DriveLocalizer() {
-            leftFront = new OverflowEncoder(new RawEncoder(AutoDriveTrain.this.leftFront));
-            leftBack = new OverflowEncoder(new RawEncoder(AutoDriveTrain.this.leftBack));
-            rightBack = new OverflowEncoder(new RawEncoder(AutoDriveTrain.this.rightBack));
-            rightFront = new OverflowEncoder(new RawEncoder(AutoDriveTrain.this.rightFront));
+            leftFrontEncoder = new OverflowEncoder(new RawEncoder(AutoDrivetrain.this.leftFrontDrive));
+            leftBackEncoder = new OverflowEncoder(new RawEncoder(AutoDrivetrain.this.leftBackDrive));
+            rightBackEncoder = new OverflowEncoder(new RawEncoder(AutoDrivetrain.this.rightBackDrive));
+            rightFrontEncoder = new OverflowEncoder(new RawEncoder(AutoDrivetrain.this.rightFrontDrive));
 
             imu = lazyImu.get();
 
 
-//            leftFront.setDirection(DcMotorEx.Direction.REVERSE);
-//            leftBack.setDirection(DcMotorEx.Direction.REVERSE);
-//            rightFront.setDirection(DcMotorEx.Direction.REVERSE);
-//            rightBack.setDirection(DcMotorEx.Direction.REVERSE);
+//            leftFrontDrive.setDirection(DcMotorEx.Direction.REVERSE);
+//            leftBackDrive.setDirection(DcMotorEx.Direction.REVERSE);
+//            rightFrontDrive.setDirection(DcMotorEx.Direction.REVERSE);
+//            rightBackDrive.setDirection(DcMotorEx.Direction.REVERSE);
         }
 
         @Override
         public Twist2dDual<Time> update() {
-            PositionVelocityPair leftFrontPosVel = leftFront.getPositionAndVelocity();
-            PositionVelocityPair leftBackPosVel = leftBack.getPositionAndVelocity();
-            PositionVelocityPair rightBackPosVel = rightBack.getPositionAndVelocity();
-            PositionVelocityPair rightFrontPosVel = rightFront.getPositionAndVelocity();
+            PositionVelocityPair leftFrontPosVel = leftFrontEncoder.getPositionAndVelocity();
+            PositionVelocityPair leftBackPosVel = leftBackEncoder.getPositionAndVelocity();
+            PositionVelocityPair rightBackPosVel = rightBackEncoder.getPositionAndVelocity();
+            PositionVelocityPair rightFrontPosVel = rightFrontEncoder.getPositionAndVelocity();
 
             YawPitchRollAngles angles = imu.getRobotYawPitchRollAngles();
 
@@ -210,7 +206,8 @@ public final class AutoDriveTrain {
         }
     }
 
-    public AutoDriveTrain(HardwareMap hardwareMap, Pose2d pose) {
+    public AutoDrivetrain(HardwareMap hardwareMap, Pose2d pose) {
+        super(hardwareMap, null);
         this.pose = pose;
 
         LynxFirmware.throwIfModulesAreOutdated(hardwareMap);
@@ -218,24 +215,6 @@ public final class AutoDriveTrain {
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
-
-        // TODO: make sure your config has motors with these names (or change them)
-        //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFrontDrive");
-        leftBack = hardwareMap.get(DcMotorEx.class, "leftBackDrive");
-        rightBack = hardwareMap.get(DcMotorEx.class, "rightBackDrive");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFrontDrive");
-
-        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        leftFront.setDirection(Constants.drivetrainLeftFrontDriveDirection);
-        leftBack.setDirection(Constants.drivetrainLeftBackDriveDirection);
-        rightFront.setDirection(Constants.drivetrainRightFrontDriveDirection);
-        rightBack.setDirection(Constants.drivetrainRightBackDriveDirection);
-
 
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
@@ -258,10 +237,10 @@ public final class AutoDriveTrain {
             maxPowerMag = Math.max(maxPowerMag, power.value());
         }
 
-        leftFront.setPower(wheelVels.leftFront.get(0) / maxPowerMag);
-        leftBack.setPower(wheelVels.leftBack.get(0) / maxPowerMag);
-        rightBack.setPower(wheelVels.rightBack.get(0) / maxPowerMag);
-        rightFront.setPower(wheelVels.rightFront.get(0) / maxPowerMag);
+        leftFrontDrive.setPower(wheelVels.leftFront.get(0) / maxPowerMag);
+        leftBackDrive.setPower(wheelVels.leftBack.get(0) / maxPowerMag);
+        rightBackDrive.setPower(wheelVels.rightBack.get(0) / maxPowerMag);
+        rightFrontDrive.setPower(wheelVels.rightFront.get(0) / maxPowerMag);
     }
 
     public final class FollowTrajectoryAction implements Action {
@@ -296,10 +275,10 @@ public final class AutoDriveTrain {
             }
 
             if (t >= timeTrajectory.duration) {
-                leftFront.setPower(0);
-                leftBack.setPower(0);
-                rightBack.setPower(0);
-                rightFront.setPower(0);
+                leftFrontDrive.setPower(0);
+                leftBackDrive.setPower(0);
+                rightBackDrive.setPower(0);
+                rightFrontDrive.setPower(0);
 
                 return false;
             }
@@ -329,10 +308,10 @@ public final class AutoDriveTrain {
                     voltage, leftFrontPower, leftBackPower, rightBackPower, rightFrontPower
             ));
 
-            leftFront.setPower(leftFrontPower);
-            leftBack.setPower(leftBackPower);
-            rightBack.setPower(rightBackPower);
-            rightFront.setPower(rightFrontPower);
+            leftFrontDrive.setPower(leftFrontPower);
+            leftBackDrive.setPower(leftBackPower);
+            rightBackDrive.setPower(rightBackPower);
+            rightFrontDrive.setPower(rightFrontPower);
 
             p.put("x", pose.position.x);
             p.put("y", pose.position.y);
@@ -388,10 +367,10 @@ public final class AutoDriveTrain {
             }
 
             if (t >= turn.duration) {
-                leftFront.setPower(0);
-                leftBack.setPower(0);
-                rightBack.setPower(0);
-                rightFront.setPower(0);
+                leftFrontDrive.setPower(0);
+                leftBackDrive.setPower(0);
+                rightBackDrive.setPower(0);
+                rightFrontDrive.setPower(0);
 
                 return false;
             }
@@ -420,10 +399,10 @@ public final class AutoDriveTrain {
                     voltage, leftFrontPower, leftBackPower, rightBackPower, rightFrontPower
             ));
 
-            leftFront.setPower(feedforward.compute(wheelVels.leftFront) / voltage);
-            leftBack.setPower(feedforward.compute(wheelVels.leftBack) / voltage);
-            rightBack.setPower(feedforward.compute(wheelVels.rightBack) / voltage);
-            rightFront.setPower(feedforward.compute(wheelVels.rightFront) / voltage);
+            leftFrontDrive.setPower(feedforward.compute(wheelVels.leftFront) / voltage);
+            leftBackDrive.setPower(feedforward.compute(wheelVels.leftBack) / voltage);
+            rightBackDrive.setPower(feedforward.compute(wheelVels.rightBack) / voltage);
+            rightFrontDrive.setPower(feedforward.compute(wheelVels.rightFront) / voltage);
 
             Canvas c = p.fieldOverlay();
             drawPoseHistory(c);

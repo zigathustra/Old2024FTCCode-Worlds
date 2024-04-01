@@ -22,7 +22,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegistrar;
 
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
-import org.firstinspires.ftc.teamcode.common.AutoDriveTrain;
+import org.firstinspires.ftc.teamcode.common.AutoDrivetrain;
 import org.firstinspires.ftc.teamcode.odometry.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.odometry.TwoDeadWheelLocalizer;
 
@@ -32,7 +32,7 @@ import java.util.List;
 
 public final class TuningOpModes {
     // TODO: change this to TankDrive.class if you're using tank
-    public static final Class<?> DRIVE_CLASS = AutoDriveTrain.class;
+    public static final Class<?> DRIVE_CLASS = AutoDrivetrain.class;
 
     public static final String GROUP = "quickstart";
     public static final boolean DISABLED = false;
@@ -52,14 +52,14 @@ public final class TuningOpModes {
         if (DISABLED) return;
 
         DriveViewFactory dvf;
-        if (DRIVE_CLASS.equals(AutoDriveTrain.class)) {
+        if (DRIVE_CLASS.equals(AutoDrivetrain.class)) {
             dvf = hardwareMap -> {
-                AutoDriveTrain md = new AutoDriveTrain(hardwareMap, new Pose2d(0, 0, 0));
+                AutoDrivetrain md = new AutoDrivetrain(hardwareMap, new Pose2d(0, 0, 0));
 
                 List<Encoder> leftEncs = new ArrayList<>(), rightEncs = new ArrayList<>();
                 List<Encoder> parEncs = new ArrayList<>(), perpEncs = new ArrayList<>();
-                if (md.localizer instanceof AutoDriveTrain.DriveLocalizer) {
-                    AutoDriveTrain.DriveLocalizer dl = (AutoDriveTrain.DriveLocalizer) md.localizer;
+                if (md.localizer instanceof AutoDrivetrain.DriveLocalizer) {
+                    AutoDrivetrain.DriveLocalizer dl = (AutoDrivetrain.DriveLocalizer) md.localizer;
                     leftEncs.add(dl.leftFront);
                     leftEncs.add(dl.leftBack);
                     rightEncs.add(dl.rightFront);
@@ -79,10 +79,10 @@ public final class TuningOpModes {
 
                 return new DriveView(
                     DriveType.MECANUM,
-                        AutoDriveTrain.PARAMS.inPerTick,
-                        AutoDriveTrain.PARAMS.maxWheelVel,
-                        AutoDriveTrain.PARAMS.minProfileAccel,
-                        AutoDriveTrain.PARAMS.maxProfileAccel,
+                        AutoDrivetrain.PARAMS.inPerTick,
+                        AutoDrivetrain.PARAMS.maxWheelVel,
+                        AutoDrivetrain.PARAMS.minProfileAccel,
+                        AutoDrivetrain.PARAMS.maxProfileAccel,
                         hardwareMap.getAll(LynxModule.class),
                         Arrays.asList(
                                 md.leftFront,
@@ -98,9 +98,9 @@ public final class TuningOpModes {
                         perpEncs,
                         md.lazyImu,
                         md.voltageSensor,
-                        () -> new MotorFeedforward(AutoDriveTrain.PARAMS.kS,
-                                AutoDriveTrain.PARAMS.kV / AutoDriveTrain.PARAMS.inPerTick,
-                                AutoDriveTrain.PARAMS.kA / AutoDriveTrain.PARAMS.inPerTick)
+                        () -> new MotorFeedforward(AutoDrivetrain.PARAMS.kS,
+                                AutoDrivetrain.PARAMS.kV / AutoDrivetrain.PARAMS.inPerTick,
+                                AutoDrivetrain.PARAMS.kA / AutoDrivetrain.PARAMS.inPerTick)
                 );
             };
 

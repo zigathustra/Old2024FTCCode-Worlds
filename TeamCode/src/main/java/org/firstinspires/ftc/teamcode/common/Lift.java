@@ -1,21 +1,39 @@
 package org.firstinspires.ftc.teamcode.common;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.config.Constants;
 
+@Config
 public class Lift {
-    private final DcMotorEx liftMotorL, liftMotorR;
-    private LinearOpMode opMode;
+    private final DcMotorEx liftMotorL;
+    private final DcMotorEx liftMotorR;
 
-    public Lift(LinearOpMode opMode) {
-        this.opMode = opMode;
+    private final double kP = 0.0;
+    private final double kI = 0.0;
+    private final double kD = 0.0;
+    private final double ff = 0.0;
 
-        liftMotorL = opMode.hardwareMap.get(DcMotorEx.class, "liftLeft");
-        liftMotorR = opMode.hardwareMap.get(DcMotorEx.class, "liftRight");
+    private final Telemetry telemetry;
+    private final int retractPos = 50;
+    private final int deployPos = 300;
+    private final int maxPos = 1000;
+    private final int minPos = 200;
+    private int targetPos;
+
+    private final double maxSpeed = 0.5;
+
+    public Lift(HardwareMap hardwareMap, Telemetry telemetry) {
+        this.telemetry = telemetry;
+
+        liftMotorL = hardwareMap.get(DcMotorEx.class, "liftLeft");
+        liftMotorR = hardwareMap.get(DcMotorEx.class, "liftRight");
 
         liftMotorL.setDirection(DcMotor.Direction.FORWARD);
         liftMotorR.setDirection(DcMotor.Direction.REVERSE);
@@ -23,100 +41,66 @@ public class Lift {
         liftMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        liftMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        liftMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMotorL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftMotorR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         liftMotorL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftMotorR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    private void logPosition()
+    public void tick()
     {
-        opMode.telemetry.addData("PositionL:  ", liftMotorL.getCurrentPosition());
-        opMode.telemetry.addData("PositionR:  ", liftMotorR.getCurrentPosition());
-
-        opMode.telemetry.update();
+        //setPIDMotorPower();
     }
-    public void stop() {
-        stopAtPosition(liftMotorL.getCurrentPosition());
+    public void up() {
+        if (!atTop()) {
+            targetPos++;
+        }
         logPosition();
     }
 
-    public void liftUp(double targetSpeed) {
-        if (!stoppedAtTop()) {
-            liftMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            liftMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    public void down(double targetSpeed) {
+        if (!atBottom()) {
+            targetPos--;
+        }
+        logPosition();
+    }
 
-            liftMotorL.setVelocity(targetSpeed * Constants.liftMaxMoveSpeed * Constants.liftMaxVelocity);
-            liftMotorR.setVelocity(targetSpeed * Constants.liftMaxMoveSpeed * Constants.liftMaxVelocity);
-
-            opMode.telemetry.addData("Stopped at Top: ", "true");
+    private boolean atTop() {
+        if (liftMotorL.getCurrentPosition() >= maxPos) {
+            return true;
         } else {
-            opMode.telemetry.addData("Stopped at Top: ", "false");
+            return false;
         }
-        logPosition();
     }
 
-    public void liftDown(double targetSpeed) {
-        if (!stoppedAtBottom()) {
-            liftMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            liftMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            liftMotorL.setVelocity(-targetSpeed * Constants.liftMaxMoveSpeed * Constants.liftMaxVelocity);
-            liftMotorR.setVelocity(-targetSpeed * Constants.liftMaxMoveSpeed * Constants.liftMaxVelocity);
-
-            opMode.telemetry.addData("Stopped at Bottom: ", " true");
+    private boolean atBottom() {
+        if (liftMotorL.getCurrentPosition() <= minPos) {
+            return true;
         } else {
-            opMode.telemetry.addData("Stopped at Bottom: ", " false");
+            return false;
         }
-        logPosition();
     }
 
-    private boolean stoppedAtTop() {
-        boolean stop = false;
-        int currentPosition = liftMotorL.getCurrentPosition();
-        if (currentPosition > (Constants.liftMaxPosition - Constants.liftMaxTolerance)) {
-            stop = true;
-            stopAtPosition(Constants.liftMaxPosition);
+    public void setTargetPos(int targetPos)
+    {
+        if (targetPos >= minPos && targetPos <= maxPos) {
+            this.targetPos = targetPos;
         }
-        return stop;
     }
 
-    private boolean stoppedAtBottom() {
-        boolean stop = false;
-        int currentPosition = liftMotorL.getCurrentPosition();
-        if (currentPosition < (Constants.liftMinPosition - Constants.liftMinTolerance)) {
-            stop = true;
-            stopAtPosition(Constants.liftMinPosition);
+    private void setLiftMotorPower()
+    {
+//        double power = pid.calculate(targetPos, liftMotorL.getCurrentPosition()) + ff;
+//        liftMotorL.setPower(power);
+//        liftMotorR.setPower(power);
+    }
+        private void logPosition()
+        {
+            telemetry.addData("PositionL:  ", liftMotorL.getCurrentPosition());
+            telemetry.addData("PositionR:  ", liftMotorR.getCurrentPosition());
+
+            telemetry.update();
         }
-        return stop;
+
     }
-
-    public void stopAtPosition(int targetPosition) {
-        liftMotorL.setTargetPosition(targetPosition);
-        liftMotorR.setTargetPosition(targetPosition);
-
-        liftMotorL.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        liftMotorR.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-        liftMotorL.setPower(Constants.liftStopPowerFactor);
-        liftMotorR.setPower(Constants.liftStopPowerFactor);
-
-        logPosition();
-    }
-    public void liftZero(){
-//        liftDown(0.2);
-//        while (!lift_sensor.isPressed()){
-//        }
-//        stop();
-        //Move lift to zero position by detecting current spike
-        liftMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        liftMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        liftMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        liftMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        liftMotorL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        liftMotorR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    }
-}

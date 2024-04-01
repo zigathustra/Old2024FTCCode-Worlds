@@ -4,43 +4,58 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.config.Constants;
 
-public class Intake {
+public class Intake extends Component {
+    private final Telemetry telemetry;
     private final DcMotorEx intakeMotor;
     private final Servo intakeServo;
-    private LinearOpMode opMode;
 
-    public Intake(LinearOpMode opMode) {
-        this.opMode = opMode;
+    private final double upPos = 0.85;
+    private final double downPos = 0.35;
+    private final double power = 0.75;
 
-        intakeMotor = opMode.hardwareMap.get(DcMotorEx.class, "intakeMotor");
-        intakeServo = opMode.hardwareMap.get(Servo.class, "intakeServo");
+
+    public Intake(HardwareMap hardwareMap, Telemetry telemetry) {
+        this.telemetry = telemetry;
+
+        intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
+        intakeServo = hardwareMap.get(Servo.class, "intakeServo");
 
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        raise();
+        up();
         stop();
     }
 
-    public void raise()
+    public void up()
     {
-        intakeServo.setPosition(0.85);
+        intakeServo.setPosition(upPos);
     }
 
-    public void lower()
+    public void down()
     {
-        intakeServo.setPosition(0.35);
+        intakeServo.setPosition(downPos);
     }
 
-    public void forward() {
-        intakeMotor.setPower(0.75);
+    public void forward()
+    {
+        intakeMotor.setPower(power);
     }
-    public void reverse() {
-        intakeMotor.setPower(-0.75);
+    public void reverse()
+    {
+        intakeMotor.setPower(-power);
     }
-    public void stop() {
+    public void stop()
+    {
         intakeMotor.setPower(0.0);
+    }
+
+    public void update()
+    {
+
     }
 }

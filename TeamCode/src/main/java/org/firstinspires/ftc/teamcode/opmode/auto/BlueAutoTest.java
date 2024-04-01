@@ -11,7 +11,7 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.common.AutoDriveTrain;
+import org.firstinspires.ftc.teamcode.common.AutoDrivetrain;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -109,7 +109,7 @@ public class BlueAutoTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        AutoDriveTrain drive = new AutoDriveTrain(hardwareMap, new Pose2d(11.8, 61.7, Math.toRadians(90)));
+        AutoDrivetrain drive = new AutoDrivetrain(hardwareMap, new Pose2d(11.8, 61.7, Math.toRadians(90)));
         Grabber grabber = new Grabber(hardwareMap);
  //       Lift lift = new Lift(hardwareMap);
 

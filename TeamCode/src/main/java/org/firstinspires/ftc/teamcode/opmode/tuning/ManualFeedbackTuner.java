@@ -4,7 +4,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.common.AutoDriveTrain;
+import org.firstinspires.ftc.teamcode.common.AutoDrivetrain;
 import org.firstinspires.ftc.teamcode.odometry.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.odometry.TwoDeadWheelLocalizer;
 
@@ -13,8 +13,8 @@ public final class ManualFeedbackTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        if (TuningOpModes.DRIVE_CLASS.equals(AutoDriveTrain.class)) {
-            AutoDriveTrain drive = new AutoDriveTrain(hardwareMap, new Pose2d(0, 0, 0));
+        if (TuningOpModes.DRIVE_CLASS.equals(AutoDrivetrain.class)) {
+            AutoDrivetrain drive = new AutoDrivetrain(hardwareMap, telemetry, new Pose2d(0, 0, 0));
             
             if (drive.localizer instanceof TwoDeadWheelLocalizer) {
                 if (TwoDeadWheelLocalizer.PARAMS.perpXTicks == 0 && TwoDeadWheelLocalizer.PARAMS.parYTicks == 0) {
