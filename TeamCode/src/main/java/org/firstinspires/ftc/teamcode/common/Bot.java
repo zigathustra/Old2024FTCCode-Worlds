@@ -111,7 +111,7 @@ public class Bot extends Component {
 
     public void update()
     {
-        lift.tick();
+        lift.update();
         intake.update();
         dropper.update();
     }

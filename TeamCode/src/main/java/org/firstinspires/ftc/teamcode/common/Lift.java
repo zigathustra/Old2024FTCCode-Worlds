@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.config.Constants;
 
 @Config
-public class Lift {
+public class Lift extends Component{
     private final DcMotorEx liftMotorL;
     private final DcMotorEx liftMotorR;
 
@@ -52,7 +52,7 @@ public class Lift {
         setTargetPos(retractPos);
     }
 
-    public void tick()
+    public void update()
     {
         //setPIDMotorPower();
     }
