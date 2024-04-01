@@ -52,7 +52,7 @@ public class TeleOpNormal extends LinearOpMode {
             } else if (rightTrigger > 0.3) {
                 bot.liftUp(rightTrigger);
             } else {
-                bot.liftStop();
+//                bot.liftStop();
             }
 
             if (gamepad1.x) {

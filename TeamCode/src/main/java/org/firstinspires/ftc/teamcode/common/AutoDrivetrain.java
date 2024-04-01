@@ -36,7 +36,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
-import org.firstinspires.ftc.teamcode.common.config.Constants;
+import org.firstinspires.ftc.teamcode.common.config.GoBilda312DcMotorData;
 import org.firstinspires.ftc.teamcode.odometry.Drawing;
 import org.firstinspires.ftc.teamcode.odometry.Localizer;
 import org.firstinspires.ftc.teamcode.odometry.ThreeDeadWheelLocalizer;
@@ -54,6 +54,7 @@ import java.util.List;
 
 @Config
 public class AutoDrivetrain extends Drivetrain{
+    private double inPerTick = GoBilda312DcMotorData.wheelInchesPerTick;
     public static class Params {
         // IMU orientation
         public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
@@ -62,8 +63,8 @@ public class AutoDrivetrain extends Drivetrain{
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
 
         // drive model parameters
-        public double inPerTick = 1.0/Constants.mecanumMoveCountsPerInch;
-        public double lateralInPerTick = 1.0/Constants.mecanumStrafeCountsPerInch;
+        public double inPerTick = GoBilda312DcMotorData.wheelInchesPerTick;
+        public double lateralInPerTick = GoBilda312DcMotorData.wheelInchesPerTick;
         public double trackWidthTicks = 0;
 
         // feedforward parameters (in tick units)
