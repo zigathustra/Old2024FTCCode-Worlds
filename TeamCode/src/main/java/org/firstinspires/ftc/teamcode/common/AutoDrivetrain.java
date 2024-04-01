@@ -51,7 +51,6 @@ import java.lang.Math;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-
 @Config
 public class AutoDrivetrain extends Drivetrain{
     private double inPerTick = GoBilda312DcMotorData.wheelInchesPerTick;
