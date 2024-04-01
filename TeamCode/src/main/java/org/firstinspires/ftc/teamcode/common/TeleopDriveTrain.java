@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.common;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.common.config.Constants;
 
 public class TeleopDrivetrain extends Drivetrain {
 
@@ -14,7 +13,7 @@ public class TeleopDrivetrain extends Drivetrain {
 
 
     public void creepDirection(double axial, double strafe, double yaw) {
-        moveDirection(axial * Constants.maxTeleOpCreepSpeed, strafe * Constants.maxTeleOpCreepSpeed, yaw * Constants.maxTeleOpCreepSpeed);
+        moveDirection(axial * maxCreepSpeed, strafe * maxCreepSpeed, yaw * maxCreepSpeed);
     }
 
     public void moveDirection(double axial, double strafe, double yaw) {
@@ -41,10 +40,6 @@ public class TeleopDrivetrain extends Drivetrain {
         leftBackDrive.setPower(leftBackPower * maxSpeed);
         rightBackDrive.setPower(rightBackPower * maxSpeed);
     }
-
-//    public double getHeading() {
-//        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-//    }
 
     public void stop() {
         leftFrontDrive.setPower(0.0);
