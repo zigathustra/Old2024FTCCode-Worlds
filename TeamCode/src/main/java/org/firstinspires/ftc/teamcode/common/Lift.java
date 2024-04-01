@@ -1,16 +1,17 @@
 package org.firstinspires.ftc.teamcode.common;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.arcrobotics.ftclib.controller.PIDFController;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.common.config.Constants;
 import org.firstinspires.ftc.teamcode.common.config.GoBilda435DcMotorData;
 
 @Config
@@ -23,7 +24,7 @@ public class Lift extends Component {
     private final double kI = 0.0;
     private final double kD = 0.0;
     private final double kF = 0.0;
-    private double maxVelocity = GoBilda435DcMotorData.maxCountsPerSec;
+    private double maxVelocity = GoBilda435DcMotorData.maxTicksPerSec;
     private final Telemetry telemetry;
     private final int retractPos = 50;
     private final int deployPos = 300;
@@ -124,5 +125,29 @@ public class Lift extends Component {
 
         telemetry.update();
     }
+    /*
+    public class LiftUp implements Action {
+        private boolean initialized = false;
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            if (!initialized) {
+                up(speedFactor);
+                initialized = true;
+            }
+
+            double pos = lift.getCurrentPosition();
+            packet.put("liftPos", pos);
+            if (pos < 2500.0) {
+                return true;
+            } else {
+                lift.setPower(0);
+                return false;
+            }
+        }
+    }
+    public Action liftUp() {
+        return new LiftUp();
+    }
+    */
 
 }

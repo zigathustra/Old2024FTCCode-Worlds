@@ -11,11 +11,9 @@ public class TeleopDrivetrain extends Drivetrain {
 
     }
 
-
     public void creepDirection(double axial, double strafe, double yaw) {
         moveDirection(axial * maxCreepSpeed, strafe * maxCreepSpeed, yaw * maxCreepSpeed);
     }
-
     public void moveDirection(double axial, double strafe, double yaw) {
         // Calculate wheel powers.
         double leftFrontPower = axial - strafe - yaw;

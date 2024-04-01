@@ -11,7 +11,6 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.teamcode.common.enums.*;
-import org.firstinspires.ftc.teamcode.common.config.Constants;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -125,10 +124,10 @@ public class VisionSensor {
                 exposureControl.setMode(ExposureControl.Mode.Manual);
                 opMode.sleep(50);
             }
-            exposureControl.setExposure((long) Constants.atExposureMS, TimeUnit.MILLISECONDS);
+            exposureControl.setExposure((long) 6, TimeUnit.MILLISECONDS);
             opMode.sleep(20);
             GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
-            gainControl.setGain(Constants.atExposureGain);
+            gainControl.setGain(250);
             opMode.sleep(20);
         }
     }
