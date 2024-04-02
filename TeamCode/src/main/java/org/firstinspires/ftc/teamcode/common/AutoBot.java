@@ -13,6 +13,13 @@ public class AutoBot extends Bot {
         drivetrain = new AutoDrivetrain(hardwareMap, startPose);
     }
 
+    public void placePurplePixel()
+    {
+        dropperDeploy();
+        lift.goToPurplePlacementPosition();
+        dropPixel();
+    }
+
     public AutoDrivetrain drivetrain()
     {
         return drivetrain;

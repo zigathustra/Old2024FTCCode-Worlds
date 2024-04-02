@@ -1,9 +1,13 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.Trajectory;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.Range;
 
@@ -19,6 +23,7 @@ import org.firstinspires.ftc.teamcode.common.enums.PropDirection;
 import org.firstinspires.ftc.teamcode.common.enums.StartPosition;
 import org.firstinspires.ftc.teamcode.common.vision.PropPipeline;
 import org.firstinspires.ftc.teamcode.common.vision.VisionSensor;
+import org.firstinspires.ftc.teamcode.opmode.auto.AutoConstants;
 import org.firstinspires.ftc.teamcode.opmode.auto.AutoOpMode;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -27,14 +32,32 @@ public abstract class AutoMaster extends LinearOpMode {
     protected Alliance alliance;
     protected StartPosition startPosition;
     protected ParkPosition parkPosition;
+    int riggingDirection;
+    int boardDirection;
+    int parkDirection;
+
+    Action selectedTrajectory;
+    int targetAprilTagNumber;
+    PropPipeline propProcessor = null;
+    AprilTagProcessor aprilTagProcessor;
+    PropDirection propDirection = null;
+    ElapsedTime timer = new ElapsedTime();
+    FtcDashboard dashboard = FtcDashboard.getInstance();
+    MultipleTelemetry tele = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+
     protected AutoBot bot;
     protected VisionSensor visionSensor;
+
+    Action leftSpikeTrajectory;
+    Action centerSpikeTrajectory;
+    Action rightSpikeTrajectory;
 
     // Start Pose Constants
     protected final Pose2d blueFarStartPose = new Pose2d(-43, 62.00, Math.toRadians(-90));
     protected final Pose2d blueNearStartPose = new Pose2d(15.85, 62.00, Math.toRadians(-90));
     protected final Pose2d redFarStartPose = new Pose2d(-43, -62.00, Math.toRadians(90));
     protected final Pose2d redNearStartPose = new Pose2d(15.85, -62.00, Math.toRadians(90));
+    protected AutoConstants autoConstants = new AutoConstants();
 
     protected AutoMaster(Alliance alliance, StartPosition startPosition, ParkPosition parkPosition) {
         this.alliance = alliance;
@@ -44,15 +67,6 @@ public abstract class AutoMaster extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        int riggingDirection;
-        int boardDirection;
-        int parkDirection;
-        int targetAprilTagNumber;
-        PropPipeline propProcessor = null;
-        AprilTagProcessor aprilTagProcessor;
-        PropDirection propDirection = null;
-        ElapsedTime timer = new ElapsedTime();
-
         bot = new AutoBot(hardwareMap, telemetry, determineStartPose());
 
         visionSensor = new VisionSensor(this, alliance);
@@ -69,7 +83,7 @@ public abstract class AutoMaster extends LinearOpMode {
         bot.intakeRetract();
         sleep(500);
 
-        Action leftSpike = bot.drivetrain().actionBuilder(bot.drivetrain().pose)
+        leftSpikeTrajectory = bot.drivetrain().actionBuilder(bot.drivetrain().pose)
                 .lineToYSplineHeading(33, Math.toRadians(0))
                 .waitSeconds(2)
                 .setTangent(Math.toRadians(90))
@@ -91,45 +105,65 @@ public abstract class AutoMaster extends LinearOpMode {
             sleep(50);
         }
         if (!isStopRequested()) {
-            timer.reset();
             visionSensor.goToNoSensingMode();
-        }
-    }
-/*            setToLowCruisingPosition();
+            selectedTrajectory = determineSelectedTrajectory();
+            timer.reset();
 
-            // Place pixel on correct spike mark and return to escape position
-            // Use propDirection determined using webcam during init
-            placePropPixel(propDirection, riggingDirection);
+            Actions.runBlocking(
+                    new SequentialAction(
+                            selectedTrajectory
+                    )
+            );
 
-            roughTravelToBoard(boardDirection, riggingDirection);
-
-            visionSensor.goToAprilTagDetectionMode();
-
-            targetAprilTagNumber = getTargetAprilTagNumber(alliance, propDirection);
-
-            roughAlignToAprilTag(boardDirection, targetAprilTagNumber, startPosition);
-//        if (timer.time() <= orientMaxTime()) {
-            // Correct strafe to directly face the target April Tag
-            autoOrientToAprilTag(visionSensor, targetAprilTagNumber, boardDirection);
-//        }
-
-//        if (timer.time() <= placeMaxTime()) {            // Correct strafe to directly face the target April Tag
-            placePixelOnBoard();
-//        }
-
-//        if (timer.time() <= parkMaxTime()) {
-            park(boardDirection, targetAprilTagNumber, parkDirection);
-//        }
-//        telemetry.addData("finish park Time: ",timer.time());
-//        telemetry.update();
-//        sleep(1000);
-            // Lower lift, lower wrist, open grabber
-
-            setToTeleopStartingPosition();
+            bot.placePurplePixel();
         }
     }
 
-*/
+    /*            setToLowCruisingPosition();
+
+                // Place pixel on correct spike mark and return to escape position
+                // Use propDirection determined using webcam during init
+                placePropPixel(propDirection, riggingDirection);
+
+                roughTravelToBoard(boardDirection, riggingDirection);
+
+                visionSensor.goToAprilTagDetectionMode();
+
+                targetAprilTagNumber = getTargetAprilTagNumber(alliance, propDirection);
+
+                roughAlignToAprilTag(boardDirection, targetAprilTagNumber, startPosition);
+    //        if (timer.time() <= orientMaxTime()) {
+                // Correct strafe to directly face the target April Tag
+                autoOrientToAprilTag(visionSensor, targetAprilTagNumber, boardDirection);
+    //        }
+
+    //        if (timer.time() <= placeMaxTime()) {            // Correct strafe to directly face the target April Tag
+                placePixelOnBoard();
+    //        }
+
+    //        if (timer.time() <= parkMaxTime()) {
+                park(boardDirection, targetAprilTagNumber, parkDirection);
+    //        }
+    //        telemetry.addData("finish park Time: ",timer.time());
+    //        telemetry.update();
+    //        sleep(1000);
+                // Lower lift, lower wrist, open grabber
+
+                setToTeleopStartingPosition();
+            }
+        }
+
+    */
+    protected Action determineSelectedTrajectory() {
+        if (propDirection == PropDirection.LEFT) {
+            return leftSpikeTrajectory;
+        } else if (propDirection == PropDirection.RIGHT) {
+            return rightSpikeTrajectory;
+        } else {
+            return centerSpikeTrajectory;
+        }
+    }
+
     protected int determineRiggingDirection() {
         if (((startPosition == StartPosition.FAR) && (alliance == Alliance.BLUE)) ||
                 ((startPosition == StartPosition.NEAR) && (alliance == Alliance.RED))) {

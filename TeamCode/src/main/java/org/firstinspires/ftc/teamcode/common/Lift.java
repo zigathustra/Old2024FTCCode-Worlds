@@ -30,12 +30,14 @@ public class Lift extends Component {
     private final int deployPos = 300;
     private final int maxPos = 1000;
     private final int minPos = 200;
+    private final int purplePlacementPos = 100;
     private final int defaultPosition = 250;
     private int targetPos = defaultPosition;
     private final double defaultSpeedFactor = 0.5;
     private double speedFactor = defaultSpeedFactor;
     private double speedL = 0.0;
     private double speedR = 0.0;
+    private boolean busy;
 
     public Lift(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -80,12 +82,27 @@ public class Lift extends Component {
         logPosition();
     }
 
+    public void goToPurplePlacementPosition()
+    {
+        setTargetPos(purplePlacementPos);
+        while (isBusy())
+        {
+            update();
+            telemetry.addData("Moving to Purple Placement Position: ", purplePlacementPos);
+            logPosition();
+        }
+    }
     private boolean atTop() {
         if (liftMotorL.getCurrentPosition() >= maxPos) {
             return true;
         } else {
             return false;
         }
+    }
+
+    boolean isBusy()
+    {
+        return !pidf.atSetPoint();
     }
 
     private boolean atBottom() {

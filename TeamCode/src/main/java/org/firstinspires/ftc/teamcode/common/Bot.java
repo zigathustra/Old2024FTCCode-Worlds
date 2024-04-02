@@ -8,7 +8,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Bot extends Component {
     protected Telemetry telemetry = null;
     private Intake intake = null;
-    private Lift lift = null;
+    protected Lift lift = null;
     private Servo shoulderL = null;
     private Servo shoulderR = null;
     private Servo wrist = null;
@@ -99,6 +99,7 @@ public class Bot extends Component {
     public void liftStop()
     {
     }
+
 
     public void launcherLock()
     {
