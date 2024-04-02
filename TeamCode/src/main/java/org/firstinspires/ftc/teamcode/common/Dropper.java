@@ -12,11 +12,11 @@ public class Dropper extends Component {
     private final Servo lowerServo;
     private final Servo upperServo;
 
-    private final double upperServoLockPos = 0.75;
-    private final double upperServoReleasePos = 0.25;
+    private final double upperServoLockPos = 1;
+    private final double upperServoReleasePos = 0.5;
 
-    private final double lowerServoLockPos = 0.75;
-    private final double lowerServoReleasePos = 0.25;
+    private final double lowerServoLockPos = 1;
+    private final double lowerServoReleasePos = 0.5;
 
     public Dropper(HardwareMap hardwareMap, Telemetry telemetry)
     {

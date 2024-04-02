@@ -1,31 +1,30 @@
-package org.firstinspires.ftc.teamcode.common;
-
-import androidx.annotation.NonNull;
+package org.firstinspires.ftc.teamcode.opmode.test;
 
 import com.acmerobotics.dashboard.config.Config;
-
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Action;
 import com.arcrobotics.ftclib.controller.PIDFController;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.common.Component;
+import org.firstinspires.ftc.teamcode.common.Lift;
 import org.firstinspires.ftc.teamcode.common.config.GoBilda435DcMotorData;
 
 @Config
-public class Lift extends Component {
-    private final DcMotorEx liftMotorL;
-    private final DcMotorEx liftMotorR;
-    private final PIDFController pidf;
-    //    private final PIDFController pidfR;
-    public static double kP = 0.01;
+@TeleOp(name = "LiftMotorTest", group = "Test")
+
+public class LiftMotorTest extends LinearOpMode {
+    private DcMotorEx liftMotorL;
+    private DcMotorEx liftMotorR;
+    public static double kP = 0.0;
     public static double kI = 0.0;
-    public static double kD = 0.001;
+    public static double kD = 0.0;
     public static double kF = 0.0;
     public static double maxVelocity = GoBilda435DcMotorData.maxTicksPerSec;
-    private final Telemetry telemetry;
     public static int retractPos = 50;
     public static int deployPos = 300;
     public static int maxPos = 1000;
@@ -40,10 +39,14 @@ public class Lift extends Component {
 
     public static int currentPos;
 
-    public Lift(HardwareMap hardwareMap, Telemetry telemetry) {
-        this.telemetry = telemetry;
-        pidf = new PIDFController(kP, kI, kD, kF);
+    private PIDFController pidf = new PIDFController(kP, kI, kD, kF);
 
+    public LiftMotorTest() {
+
+    }
+
+    @Override
+    public void runOpMode() {
         liftMotorL = hardwareMap.get(DcMotorEx.class, "liftLeft");
         liftMotorR = hardwareMap.get(DcMotorEx.class, "liftRight");
 
@@ -60,6 +63,32 @@ public class Lift extends Component {
         liftMotorR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         setTargetPos(retractPos);
+
+        double leftTrigger = 0.0;
+        double rightTrigger = 0.0;
+
+        targetPos = 500;
+        waitForStart();
+
+        while (opModeIsActive()) {
+
+/*            leftTrigger = gamepad1.left_trigger;
+            rightTrigger = gamepad1.right_trigger;
+            if (leftTrigger > 0.3) {
+                liftMotorL.setPower(leftTrigger);
+                liftMotorR.setPower(leftTrigger);
+
+            } else if (rightTrigger > 0.3) {
+                liftMotorL.setPower(rightTrigger);
+                liftMotorR.setPower(rightTrigger);
+            } else {
+//                liftMotorL.setPower(0);
+//                liftMotorR.setPower(0);
+            }
+
+ */
+            update();
+        }
     }
 
     public void update() {
@@ -68,35 +97,34 @@ public class Lift extends Component {
         pidf.setI(kI);
         pidf.setP(kP);
         setPIDFMotorPower();
-//        logPosition();
+        logPosition();
     }
 
     public void up(double powerFactor) {
         this.powerFactor = powerFactor;
         if (!atTop()) {
-            targetPos = targetPos + 10;
+            targetPos++;
         }
-//        logPosition();
+        logPosition();
     }
 
     public void down(double powerFactor) {
         this.powerFactor = powerFactor;
         if (!atBottom()) {
-            targetPos = targetPos- 10;
+            targetPos--;
         }
-//        logPosition();
+        logPosition();
     }
 
-    public void goToPurplePlacementPosition()
-    {
+    public void goToPurplePlacementPosition() {
         setTargetPos(purplePlacementPos);
-        while (isBusy())
-        {
+        while (isBusy()) {
             update();
             telemetry.addData("Moving to Purple Placement Position: ", purplePlacementPos);
             logPosition();
         }
     }
+
     private boolean atTop() {
         if (liftMotorL.getCurrentPosition() >= maxPos) {
             return true;
@@ -105,8 +133,7 @@ public class Lift extends Component {
         }
     }
 
-    boolean isBusy()
-    {
+    private boolean isBusy() {
         return !pidf.atSetPoint();
     }
 
@@ -133,11 +160,9 @@ public class Lift extends Component {
     }
 
     private void setPIDFMotorPower() {
-//        if (!pidf.atSetPoint()) {
+        //if (!pidf.atSetPoint()) {
             power = pidf.calculate(avgCurrentPos(), targetPos) * powerFactor;
-//        }
-        power = power * powerFactor;
-
+        //}
 
         liftMotorL.setPower(power);
         liftMotorR.setPower(power);
@@ -152,29 +177,4 @@ public class Lift extends Component {
         telemetry.addData("PowerR:  ", liftMotorR.getPower());
         telemetry.update();
     }
-    /*
-    public class LiftUp implements Action {
-        private boolean initialized = false;
-        @Override
-        public boolean run(@NonNull TelemetryPacket packet) {
-            if (!initialized) {
-                up(powerFactor);
-                initialized = true;
-            }
-
-            double pos = lift.getCurrentPosition();
-            packet.put("liftPos", pos);
-            if (pos < 2500.0) {
-                return true;
-            } else {
-                lift.setPower(0);
-                return false;
-            }
-        }
-    }
-    public Action liftUp() {
-        return new LiftUp();
-    }
-    */
-
 }
