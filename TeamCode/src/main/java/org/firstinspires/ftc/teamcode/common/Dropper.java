@@ -20,10 +20,10 @@ public class Dropper extends Component {
 
     public Dropper(HardwareMap hardwareMap, Telemetry telemetry)
     {
-        lowerSensor = hardwareMap.get(ColorRangeSensor.class, "lowerSensor");
-        upperSensor = hardwareMap.get(ColorRangeSensor.class, "upperSensor");
-        lowerServo = hardwareMap.get(Servo.class, "lowerServo");
-        upperServo = hardwareMap.get(Servo.class, "lowerServo");
+        lowerSensor = hardwareMap.get(ColorRangeSensor.class, "dropLowerSensor");
+        upperSensor = hardwareMap.get(ColorRangeSensor.class, "dropUpperSensor");
+        lowerServo = hardwareMap.get(Servo.class, "dropLowerServo");
+        upperServo = hardwareMap.get(Servo.class, "dropUpperServo");
     }
 
     public void dropPixel()
