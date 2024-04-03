@@ -36,7 +36,7 @@ public class Lift extends Component {
     public static double powerFactor = defaultPowerFactor;
     public static boolean busy;
     public static double power = 0.0;
-    public static int increment = 25;
+    public static int increment = 50;
     public static int currentPos;
     public static boolean loggingOn;
 

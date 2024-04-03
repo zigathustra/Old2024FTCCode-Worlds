@@ -18,7 +18,7 @@ public class Bot extends Component {
 
     private double shoulderRUpPos = 1.0;
     //    private double shoulderRMidPos = 0.5;
-    private double shoulderRDownPos = 0.1;
+    private double shoulderRDownPos = 0.15;
     private double shoulderLUpPos = 0.9;
     //    private double shoulderLMidPos = 0.5;
     private double shoulderLDownPos = 0.0;
@@ -38,7 +38,7 @@ public class Bot extends Component {
         intake = new Intake(hardwareMap, telemetry, loggingOn);
 
         // Lift
-        lift = new Lift(hardwareMap, telemetry, loggingOn);
+        lift = new Lift(hardwareMap, telemetry, true);
 
         // Shoulder
         shoulderL = hardwareMap.get(Servo.class, "shoulderL");
@@ -52,7 +52,6 @@ public class Bot extends Component {
 
         // Dropper
         dropper = new Dropper(hardwareMap, telemetry, loggingOn);
-        dropperDeployed = false;
         loading = false;
 
         // Launcher
@@ -70,7 +69,7 @@ public class Bot extends Component {
     }
 
     public void dropperDeploy() {
-        lift.setTargetPos(350);
+        lift.setTargetPos(450);
         wrist.setPosition(wristUpPos);
         shoulderL.setPosition(shoulderLUpPos);
         shoulderR.setPosition(shoulderRUpPos);
@@ -78,7 +77,7 @@ public class Bot extends Component {
     }
 
     public void dropperRetract() {
-        lift.setTargetPos(350);
+        lift.setTargetPos(250);
         wrist.setPosition(wristDownPos);
         shoulderL.setPosition(shoulderLDownPos);
         shoulderR.setPosition(shoulderRDownPos);

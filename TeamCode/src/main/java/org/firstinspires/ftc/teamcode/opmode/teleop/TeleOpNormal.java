@@ -17,6 +17,8 @@ public class TeleOpNormal extends LinearOpMode {
 
     public static boolean loggingOn = false;
 
+    public static double liftPowerFactor = 0.5;
+
     @Override
     public void runOpMode() {
 
@@ -54,9 +56,9 @@ public class TeleOpNormal extends LinearOpMode {
             leftTrigger = gamepad1.left_trigger;
             rightTrigger = gamepad1.right_trigger;
             if (leftTrigger > 0.3) {
-                bot.liftDown(leftTrigger);
+                bot.liftDown(leftTrigger*liftPowerFactor);
             } else if (rightTrigger > 0.3) {
-                bot.liftUp(rightTrigger);
+                bot.liftUp(rightTrigger*liftPowerFactor);
             }
 
             if (gamepad1.y) {
