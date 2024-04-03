@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.test;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
 import com.acmerobotics.roadrunner.MotorFeedforward;
@@ -37,6 +39,8 @@ public final class TuningOpModes {
     public static final String GROUP = "quickstart";
     public static final boolean DISABLED = false;
 
+    public static boolean loggingOn = true;
+
     private TuningOpModes() {}
 
     private static OpModeMeta metaForClass(Class<? extends OpMode> cls) {
@@ -54,7 +58,7 @@ public final class TuningOpModes {
         DriveViewFactory dvf;
         if (DRIVE_CLASS.equals(AutoDrivetrain.class)) {
             dvf = hardwareMap -> {
-                AutoDrivetrain md = new AutoDrivetrain(hardwareMap, new Pose2d(0, 0, 0));
+                AutoDrivetrain md = new AutoDrivetrain(hardwareMap, telemetry, new Pose2d(0, 0, 0), loggingOn);
 
                 List<Encoder> leftEncs = new ArrayList<>(), rightEncs = new ArrayList<>();
                 List<Encoder> parEncs = new ArrayList<>(), perpEncs = new ArrayList<>();

@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmode.common;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -13,6 +15,8 @@ public class TeleOpNormal extends LinearOpMode {
 
     private TeleopBot bot;
 
+    public static boolean loggingOn = false;
+
     @Override
     public void runOpMode() {
 
@@ -22,10 +26,12 @@ public class TeleOpNormal extends LinearOpMode {
         double leftTrigger = 0.0;
         double rightTrigger = 0.0;
 
-        bot = new TeleopBot(hardwareMap, telemetry);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
+        bot = new TeleopBot(hardwareMap, telemetry, loggingOn);
         waitForStart();
 
-        while (opModeIsActive() && !gamepad1.ps) {
+        while (opModeIsActive()) {
 
             if (gamepad1.dpad_up) {
                 bot.creepDirection(1.0, 0.0, 0.0);
@@ -51,34 +57,28 @@ public class TeleOpNormal extends LinearOpMode {
                 bot.liftDown(leftTrigger);
             } else if (rightTrigger > 0.3) {
                 bot.liftUp(rightTrigger);
-            } else {
-//                bot.liftStop();
             }
 
-            if (gamepad1.x) {
-                bot.dropPixel();
-            } else if (gamepad1.a) {
-                bot.loadPixel();
-            }
-
-            if (gamepad1.b) {
+            if (gamepad1.y) {
                 bot.dropperDeploy();
-            } else if (gamepad1.y) {
+            } else if (gamepad1.b) {
                 bot.dropperRetract();
             }
 
-            if (gamepad1.triangle) {
-                bot.intakeDeploy();
-            } else if (gamepad1.x) {
-                bot.intakeRetract();
+            if (gamepad1.right_bumper) {
+                bot.load();
+            } else if (gamepad1.left_bumper) {
+                bot.stopLoad();
             }
 
-            if(gamepad1.start){
-                bot.launcherRelease();
-            } else if(gamepad1.share) {
-                bot.launcherLock();
+            if (gamepad1.square) {
+                bot.dropPixel();
+                sleep(200);
             }
             bot.update();
+
         }
+
     }
 }
+

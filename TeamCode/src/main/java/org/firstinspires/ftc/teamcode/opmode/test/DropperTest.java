@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.common.Dropper;
 import org.firstinspires.ftc.teamcode.common.TeleopBot;
 
 @Config
@@ -11,30 +12,35 @@ import org.firstinspires.ftc.teamcode.common.TeleopBot;
 
 public class DropperTest extends LinearOpMode {
 
-    private TeleopBot bot;
+    private Dropper dropper;
 
+    static public boolean loggingOn = true;
+    private boolean loading = false;
     @Override
     public void runOpMode() {
 
-        bot = new TeleopBot(hardwareMap, telemetry);
+        dropper = new Dropper(hardwareMap, telemetry, loggingOn);
         waitForStart();
 
-        while (opModeIsActive() && !gamepad1.ps) {
-
-
-            if (gamepad1.x) {
-                bot.dropPixel();
-            } else if (gamepad1.a) {
-                bot.loadPixel();
+        while (opModeIsActive()) {
+            if (gamepad1.right_bumper) {
+                dropper.load();
+                loading = true;
+            } else if (gamepad1.left_bumper) {
+                dropper.stopLoad();
+                loading = false;
+            }
+            if (gamepad1.square) {
+                dropper.dropPixel();
+                sleep(200);
             }
 
-            if (gamepad1.b) {
-                bot.dropperDeploy();
-            } else if (gamepad1.y) {
-                bot.dropperRetract();
+            dropper.update();
+            if (dropper.fullyLoaded() && loading)
+            {
+                loading = false;
+                dropper.stopLoad();
             }
-
-            bot.update();
         }
     }
 }

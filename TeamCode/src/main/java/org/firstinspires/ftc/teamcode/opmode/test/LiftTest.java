@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmode.test;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -15,12 +16,15 @@ import org.firstinspires.ftc.teamcode.common.TeleopBot;
 public class LiftTest extends LinearOpMode {
 
     private Lift lift;
+
     @Override
     public void runOpMode() {
         double leftTrigger = 0.0;
         double rightTrigger = 0.0;
 
-        lift = new Lift(hardwareMap, telemetry);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
+        lift = new Lift(hardwareMap, telemetry, true);
         waitForStart();
 
         while (opModeIsActive()) {

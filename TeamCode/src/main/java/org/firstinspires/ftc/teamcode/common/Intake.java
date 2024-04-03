@@ -8,22 +8,22 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Intake extends Component {
-    private final Telemetry telemetry;
     private final DcMotorEx intakeMotor;
     private final Servo intakeServo;
 
-    private final double upPos = 0.85;
+    private final double upPos = 1.0;
     private final double downPos = 0.35;
     private final double power = 0.75;
 
 
-    public Intake(HardwareMap hardwareMap, Telemetry telemetry) {
-        this.telemetry = telemetry;
+    public Intake(HardwareMap hardwareMap, Telemetry telemetry, boolean loggingOn) {
+        super(telemetry, loggingOn);
 
         intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
         intakeServo = hardwareMap.get(Servo.class, "intakeServo");
 
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakeServo.setDirection(Servo.Direction.FORWARD);
         up();
         stop();
     }
@@ -38,10 +38,6 @@ public class Intake extends Component {
     {
         stop();
         up();
-    }
-    public void load()
-    {
-
     }
     private void up()
     {

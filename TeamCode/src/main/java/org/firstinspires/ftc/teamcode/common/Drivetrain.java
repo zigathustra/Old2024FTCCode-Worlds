@@ -13,34 +13,36 @@ public class Drivetrain {
     public final DcMotorEx rightFrontDrive;
     public final DcMotorEx leftBackDrive;
     public final DcMotorEx rightBackDrive;
-    protected final double maxNormalSpeed = 0.75;
-    protected final double maxSlowedSpeed = 0.5;
-    protected final double maxCreepSpeed = 0.15;
-    protected double maxSpeed =  maxNormalSpeed;
+    protected final double maxNormalPowerFactor = 0.75;
+    protected final double maxSlowedPowerFactor = 0.5;
+    protected final double maxCreepPowerFactor = 0.35;
+    protected double maxPowerFactor =  maxNormalPowerFactor;
+    protected boolean loggingOn;
 
-    protected Drivetrain(HardwareMap hardwareMap, Telemetry telemetry)
+    protected Drivetrain(HardwareMap hardwareMap, Telemetry telemetry, boolean loggingOn)
     {
         this.telemetry = telemetry;
+        this.loggingOn = loggingOn;
 
         leftFrontDrive = hardwareMap.get(DcMotorEx.class, "leftFrontDrive");
         leftBackDrive = hardwareMap.get(DcMotorEx.class, "leftBackDrive");
         rightFrontDrive = hardwareMap.get(DcMotorEx.class, "rightFrontDrive");
         rightBackDrive = hardwareMap.get(DcMotorEx.class, "rightBackDrive");
 
-        leftFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-        leftBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
 
         setBrakingOn();
     }
-    public void setToNormalSpeed()
+    public void setToNormalPowerFactor()
     {
-        maxSpeed = maxNormalSpeed;
+        maxPowerFactor = maxNormalPowerFactor;
     }
 
-    public void setToSlowedSpeed(){
-        maxSpeed = maxSlowedSpeed;
+    public void setToSlowedPowerFactor(){
+        maxPowerFactor = maxSlowedPowerFactor;
     }
     protected void setBrakingOn() {
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

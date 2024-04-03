@@ -36,6 +36,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.config.GoBilda312DcMotorData;
 import org.firstinspires.ftc.teamcode.odometry.Drawing;
 import org.firstinspires.ftc.teamcode.odometry.Localizer;
@@ -207,8 +208,8 @@ public class AutoDrivetrain extends Drivetrain{
         }
     }
 
-    public AutoDrivetrain(HardwareMap hardwareMap, Pose2d pose) {
-        super(hardwareMap, null);
+    public AutoDrivetrain(HardwareMap hardwareMap, Telemetry telemetry, Pose2d pose, boolean loggingOn) {
+        super(hardwareMap, telemetry, loggingOn);
         this.pose = pose;
 
         LynxFirmware.throwIfModulesAreOutdated(hardwareMap);

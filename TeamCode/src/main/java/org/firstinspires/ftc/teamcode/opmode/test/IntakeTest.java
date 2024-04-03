@@ -14,18 +14,20 @@ public class IntakeTest extends LinearOpMode {
 
     private TeleopBot bot;
 
+    public static boolean loggingOn = false;
+
     @Override
     public void runOpMode() {
 
-        bot = new TeleopBot(hardwareMap, telemetry);
+        bot = new TeleopBot(hardwareMap, telemetry, loggingOn);
         waitForStart();
 
-        while (opModeIsActive() && !gamepad1.ps) {
+        while (opModeIsActive()) {
 
             if (gamepad1.triangle) {
-                bot.intakeDeploy();
+                bot.load();
             } else if (gamepad1.x) {
-                bot.intakeRetract();
+                bot.stopLoad();
             }
 
             if(gamepad1.start){

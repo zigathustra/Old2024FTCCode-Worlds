@@ -36,6 +36,8 @@ public abstract class AutoMaster extends LinearOpMode {
     int boardDirection;
     int parkDirection;
 
+    public static boolean loggingOn = false;
+
     Action selectedTrajectory;
     int targetAprilTagNumber;
     PropPipeline propProcessor = null;
@@ -67,7 +69,7 @@ public abstract class AutoMaster extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        bot = new AutoBot(hardwareMap, telemetry, determineStartPose());
+        bot = new AutoBot(hardwareMap, telemetry, determineStartPose(), loggingOn);
 
         visionSensor = new VisionSensor(this, alliance);
 
@@ -80,7 +82,7 @@ public abstract class AutoMaster extends LinearOpMode {
         visionSensor.goToPropDetectionMode();
 
         bot.dropperRetract();
-        bot.intakeRetract();
+        bot.stopLoad();
         sleep(500);
 
         leftSpikeTrajectory = bot.drivetrain().actionBuilder(bot.drivetrain().pose)

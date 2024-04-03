@@ -11,10 +11,12 @@ import org.firstinspires.ftc.teamcode.odometry.TwoDeadWheelLocalizer;
 public final class ManualFeedbackTuner extends LinearOpMode {
     public static double DISTANCE = 64;
 
+    public static boolean loggingOn = true;
+
     @Override
     public void runOpMode() throws InterruptedException {
         if (TuningOpModes.DRIVE_CLASS.equals(AutoDrivetrain.class)) {
-            AutoDrivetrain drive = new AutoDrivetrain(hardwareMap, new Pose2d(0, 0, 0));
+            AutoDrivetrain drive = new AutoDrivetrain(hardwareMap, telemetry, new Pose2d(0, 0, 0), loggingOn);
             
             if (drive.localizer instanceof TwoDeadWheelLocalizer) {
                 if (TwoDeadWheelLocalizer.PARAMS.perpXTicks == 0 && TwoDeadWheelLocalizer.PARAMS.parYTicks == 0) {

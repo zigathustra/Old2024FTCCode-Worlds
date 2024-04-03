@@ -12,12 +12,14 @@ import org.firstinspires.ftc.teamcode.odometry.Drawing;
 import org.firstinspires.ftc.teamcode.common.AutoDrivetrain;
 
 public class LocalizationTest extends LinearOpMode {
+
+    public static boolean loggingOn = false;
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         if (TuningOpModes.DRIVE_CLASS.equals(AutoDrivetrain.class)) {
-            AutoDrivetrain drive = new AutoDrivetrain(hardwareMap, new Pose2d(0, 0, 0));
+            AutoDrivetrain drive = new AutoDrivetrain(hardwareMap, telemetry, new Pose2d(0, 0, 0), loggingOn);
 
             waitForStart();
 

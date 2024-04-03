@@ -7,10 +7,10 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class AutoBot extends Bot {
     private final AutoDrivetrain drivetrain;
-    public AutoBot(HardwareMap hardwareMap, Telemetry telemetry, Pose2d startPose)
+    public AutoBot(HardwareMap hardwareMap, Telemetry telemetry, Pose2d startPose, boolean loggingOn)
     {
-        super(hardwareMap, telemetry);
-        drivetrain = new AutoDrivetrain(hardwareMap, startPose);
+        super(hardwareMap, telemetry, loggingOn);
+        drivetrain = new AutoDrivetrain(hardwareMap, telemetry, startPose, loggingOn);
     }
 
     public void placePurplePixel()

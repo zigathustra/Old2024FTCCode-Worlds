@@ -26,6 +26,7 @@ public class SingleServoTest extends LinearOpMode {
         // Connect to servo (Assume Robot Left Hand)
         // Change the text in quotes to match any servo name on your robot.
         servo = hardwareMap.get(ServoImplEx.class, "wrist");
+        servo.setDirection(Servo.Direction.REVERSE);
 
 
         // Wait for the start button

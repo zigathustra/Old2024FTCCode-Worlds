@@ -6,13 +6,13 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class TeleopDrivetrain extends Drivetrain {
 
-    public TeleopDrivetrain(HardwareMap hardwareMap, Telemetry telemetry) {
-        super(hardwareMap, telemetry);
+    public TeleopDrivetrain(HardwareMap hardwareMap, Telemetry telemetry, boolean loggingOn) {
+        super(hardwareMap, telemetry, loggingOn);
 
     }
 
     public void creepDirection(double axial, double strafe, double yaw) {
-        moveDirection(axial * maxCreepSpeed, strafe * maxCreepSpeed, yaw * maxCreepSpeed);
+        moveDirection(axial * maxCreepPowerFactor, strafe * maxCreepPowerFactor, yaw * maxCreepPowerFactor);
     }
     public void moveDirection(double axial, double strafe, double yaw) {
         // Calculate wheel powers.
@@ -33,10 +33,10 @@ public class TeleopDrivetrain extends Drivetrain {
             rightBackPower /= max;
         }
 
-        leftFrontDrive.setPower(leftFrontPower * maxSpeed);
-        rightFrontDrive.setPower(rightFrontPower * maxSpeed);
-        leftBackDrive.setPower(leftBackPower * maxSpeed);
-        rightBackDrive.setPower(rightBackPower * maxSpeed);
+        leftFrontDrive.setPower(leftFrontPower * maxPowerFactor);
+        rightFrontDrive.setPower(rightFrontPower * maxPowerFactor);
+        leftBackDrive.setPower(leftBackPower * maxPowerFactor);
+        rightBackDrive.setPower(rightBackPower * maxPowerFactor);
     }
 
     public void stop() {

@@ -14,106 +14,119 @@ public class Bot extends Component {
     private Servo wrist = null;
     private Dropper dropper = null;
     private Servo launcher = null;
+    private boolean dropperDeployed = false;
 
-    private double shoulderUpPos = 0.75;
-    private double shouldMidPos = 0.5;
-    private double shoulderDownPos = 0.25;
-    private double wristUpPos = 0.75;
-    private double wristMidPos = 0.5;
-    private double wristDownPos = 0.25;
-    private double launcherLockPos =  0.75;
+    private double shoulderRUpPos = 1.0;
+    //    private double shoulderRMidPos = 0.5;
+    private double shoulderRDownPos = 0.1;
+    private double shoulderLUpPos = 0.9;
+    //    private double shoulderLMidPos = 0.5;
+    private double shoulderLDownPos = 0.0;
+
+    private double wristUpPos = 0.9;
+    private double wristDownPos = 0.15;
+    private double launcherLockPos = 0.75;
     private double launcherReleasePos = 0.25;
+    private boolean loading = false;
+
+    protected boolean loggingOn;
 
 
-    public Bot(HardwareMap hardwareMap, Telemetry telemetry)
-    {
-        this.telemetry = telemetry;
-
+    public Bot(HardwareMap hardwareMap, Telemetry telemetry, boolean loggingOn) {
+        super(telemetry, loggingOn);
         // Intake
-        intake = new Intake(hardwareMap, telemetry);
+        intake = new Intake(hardwareMap, telemetry, loggingOn);
 
         // Lift
-        lift = new Lift(hardwareMap, telemetry);
+        lift = new Lift(hardwareMap, telemetry, loggingOn);
 
         // Shoulder
-        shoulderL = hardwareMap.get(Servo.class,"shoulderL");
-        shoulderR = hardwareMap.get(Servo.class,"shoulderR");
+        shoulderL = hardwareMap.get(Servo.class, "shoulderL");
+        shoulderR = hardwareMap.get(Servo.class, "shoulderR");
         shoulderL.setDirection(Servo.Direction.REVERSE);
         shoulderR.setDirection(Servo.Direction.FORWARD);
-        shoulderL.setPosition(shoulderDownPos);
-        shoulderR.setPosition(shoulderDownPos);
 
         // Wrist
-        wrist = hardwareMap.get(Servo.class,"wrist");
-        wrist.setDirection(Servo.Direction.FORWARD);
-        wrist.setPosition(wristDownPos);
+        wrist = hardwareMap.get(Servo.class, "wrist");
+        wrist.setDirection(Servo.Direction.REVERSE);
 
         // Dropper
-        dropper = new Dropper(hardwareMap, telemetry);
+        dropper = new Dropper(hardwareMap, telemetry, loggingOn);
+        dropperDeployed = false;
+        loading = false;
 
         // Launcher
-        launcher = hardwareMap.get(Servo.class,"launcher");
+        launcher = hardwareMap.get(Servo.class, "launcher");
         launcher.setDirection(Servo.Direction.FORWARD);
         launcher.setPosition(launcherLockPos);
 
+        dropperDeploy();
     }
 
-    public void loadPixel()
-    {
-
-    }
 
     public void dropPixel()
     {
         dropper.dropPixel();
     }
-    public void dropperDeploy()
-    {
 
+    public void dropperDeploy() {
+        lift.setTargetPos(350);
+        wrist.setPosition(wristUpPos);
+        shoulderL.setPosition(shoulderLUpPos);
+        shoulderR.setPosition(shoulderRUpPos);
+        dropperDeployed = true;
     }
 
-    public void dropperRetract()
-    {
-
+    public void dropperRetract() {
+        lift.setTargetPos(350);
+        wrist.setPosition(wristDownPos);
+        shoulderL.setPosition(shoulderLDownPos);
+        shoulderR.setPosition(shoulderRDownPos);
+        dropperDeployed = false;
     }
 
-    public void intakeDeploy()
-    {
-        intake.deploy();
+    public void load() {
+        if (!dropperDeployed) {
+            dropper.load();
+            intake.deploy();
+            loading = true;
+        }
     }
 
-    public void intakeRetract()
-    {
+    public void stopLoad() {
         intake.retract();
-    }
-    public void liftUp(double speed)
-    {
-        lift.up(speed);
+        dropper.stopLoad();
+        loading = false;
     }
 
-    public void liftDown(double speed)
-    {
-        lift.down(speed);
+    public void liftUp(double power) {
+        if (dropperDeployed) {
+            lift.up(power);
+        }
     }
 
-    public void liftStop()
-    {
+    public void liftDown(double power) {
+        if (dropperDeployed) {
+            lift.down(power);
+        }
     }
 
-
-    public void launcherLock()
-    {
+    public void launcherLock() {
         launcher.setPosition(launcherLockPos);
     }
-    public void launcherRelease()
-    {
+
+    public void launcherRelease() {
         launcher.setPosition(launcherReleasePos);
     }
 
-    public void update()
-    {
+    public void update() {
         lift.update();
         intake.update();
         dropper.update();
+        if (dropper.fullyLoaded() && loading)
+        {
+            loading = false;
+            dropper.stopLoad();
+        }
     }
 }

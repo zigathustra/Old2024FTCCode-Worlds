@@ -25,7 +25,6 @@ public class Lift extends Component {
     public static double kD = 0.001;
     public static double kF = 0.0;
     public static double maxVelocity = GoBilda435DcMotorData.maxTicksPerSec;
-    private final Telemetry telemetry;
     public static int retractPos = 50;
     public static int deployPos = 300;
     public static int maxPos = 1000;
@@ -37,11 +36,13 @@ public class Lift extends Component {
     public static double powerFactor = defaultPowerFactor;
     public static boolean busy;
     public static double power = 0.0;
-
+    public static int increment = 25;
     public static int currentPos;
+    public static boolean loggingOn;
 
-    public Lift(HardwareMap hardwareMap, Telemetry telemetry) {
-        this.telemetry = telemetry;
+    public Lift(HardwareMap hardwareMap, Telemetry telemetry, boolean loggingOn)
+    {
+        super(telemetry, loggingOn);
         pidf = new PIDFController(kP, kI, kD, kF);
 
         liftMotorL = hardwareMap.get(DcMotorEx.class, "liftLeft");
@@ -68,35 +69,33 @@ public class Lift extends Component {
         pidf.setI(kI);
         pidf.setP(kP);
         setPIDFMotorPower();
-//        logPosition();
+        if (loggingOn) {
+            logTelemetry();
+        }
     }
 
     public void up(double powerFactor) {
         this.powerFactor = powerFactor;
         if (!atTop()) {
-            targetPos = targetPos + 10;
+            targetPos = targetPos + increment;
         }
-//        logPosition();
     }
 
     public void down(double powerFactor) {
         this.powerFactor = powerFactor;
         if (!atBottom()) {
-            targetPos = targetPos- 10;
+            targetPos = targetPos - increment;
         }
-//        logPosition();
     }
 
-    public void goToPurplePlacementPosition()
-    {
+    public void goToPurplePlacementPosition() {
         setTargetPos(purplePlacementPos);
-        while (isBusy())
-        {
+        while (isBusy()) {
             update();
             telemetry.addData("Moving to Purple Placement Position: ", purplePlacementPos);
-            logPosition();
         }
     }
+
     private boolean atTop() {
         if (liftMotorL.getCurrentPosition() >= maxPos) {
             return true;
@@ -105,8 +104,7 @@ public class Lift extends Component {
         }
     }
 
-    boolean isBusy()
-    {
+    boolean isBusy() {
         return !pidf.atSetPoint();
     }
 
@@ -133,17 +131,13 @@ public class Lift extends Component {
     }
 
     private void setPIDFMotorPower() {
-//        if (!pidf.atSetPoint()) {
-            power = pidf.calculate(avgCurrentPos(), targetPos) * powerFactor;
-//        }
+        power = pidf.calculate(avgCurrentPos(), targetPos) * powerFactor;
         power = power * powerFactor;
-
-
         liftMotorL.setPower(power);
         liftMotorR.setPower(power);
     }
 
-    private void logPosition() {
+    private void logTelemetry() {
         telemetry.addData("PositionL:  ", liftMotorL.getCurrentPosition());
         telemetry.addData("PositionR:  ", liftMotorR.getCurrentPosition());
         telemetry.addData("Target:  ", targetPos);
