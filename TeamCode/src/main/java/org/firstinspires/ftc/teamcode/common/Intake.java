@@ -13,7 +13,7 @@ public class Intake extends Component {
 
     private final double upPos = 1.0;
     private final double downPos = 0.35;
-    private final double power = 0.75;
+    private final double power = 0.90;
 
 
     public Intake(HardwareMap hardwareMap, Telemetry telemetry, boolean loggingOn) {
@@ -63,6 +63,5 @@ public class Intake extends Component {
 
     public void update()
     {
-
     }
 }

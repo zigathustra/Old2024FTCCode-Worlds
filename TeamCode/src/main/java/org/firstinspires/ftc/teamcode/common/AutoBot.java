@@ -16,7 +16,7 @@ public class AutoBot extends Bot {
     public void placePurplePixel()
     {
         dropperDeploy();
-        lift.goToPurplePlacementPosition();
+//        lift.goToPurplePlacementPosition();
         dropPixel();
     }
 

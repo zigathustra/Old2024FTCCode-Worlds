@@ -24,12 +24,12 @@ public class Lift extends Component {
     public static double kI = 0.0;
     public static double kD = 0.001;
     public static double kF = 0.0;
+    private double positionTolerance = 10;
+    private double derivativeTolerance = 10;
     public static double maxVelocity = GoBilda435DcMotorData.maxTicksPerSec;
-    public static int retractPos = 50;
-    public static int deployPos = 300;
-    public static int maxPos = 1000;
-    private final int minPos = 200;
-    public static int purplePlacementPos = 100;
+    public static int maxPos = 1500;
+    public static int retractPos = 800;
+    private final int minPos = 0;
     public static final int defaultPosition = 250;
     public static int targetPos = defaultPosition;
     public static double defaultPowerFactor = 0.5;
@@ -38,12 +38,14 @@ public class Lift extends Component {
     public static double power = 0.0;
     public static int increment = 50;
     public static int currentPos;
-    public static boolean loggingOn;
+
 
     public Lift(HardwareMap hardwareMap, Telemetry telemetry, boolean loggingOn)
     {
         super(telemetry, loggingOn);
         pidf = new PIDFController(kP, kI, kD, kF);
+
+        pidf.setTolerance(positionTolerance);
 
         liftMotorL = hardwareMap.get(DcMotorEx.class, "liftLeft");
         liftMotorR = hardwareMap.get(DcMotorEx.class, "liftRight");
@@ -68,6 +70,7 @@ public class Lift extends Component {
         pidf.setF(kF);
         pidf.setI(kI);
         pidf.setP(kP);
+
         setPIDFMotorPower();
         if (loggingOn) {
             logTelemetry();
@@ -88,12 +91,17 @@ public class Lift extends Component {
         }
     }
 
-    public void goToPurplePlacementPosition() {
-        setTargetPos(purplePlacementPos);
+    public void goToPositionSychronous(int target) {
+        setTargetPos(target);
+        update();
         while (isBusy()) {
             update();
-            telemetry.addData("Moving to Purple Placement Position: ", purplePlacementPos);
         }
+    }
+
+    public void goToRetractPosition()
+    {
+        goToPositionSychronous(retractPos);
     }
 
     private boolean atTop() {

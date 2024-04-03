@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.common.TeleopBot;
 public class LiftTest extends LinearOpMode {
 
     private Lift lift;
-
+    public static double liftPowerFactor = 0.15;
     @Override
     public void runOpMode() {
         double leftTrigger = 0.0;
@@ -32,11 +32,9 @@ public class LiftTest extends LinearOpMode {
             leftTrigger = gamepad1.left_trigger;
             rightTrigger = gamepad1.right_trigger;
             if (leftTrigger > 0.3) {
-                lift.down(leftTrigger);
+                lift.down(leftTrigger*liftPowerFactor);
             } else if (rightTrigger > 0.3) {
-                lift.up(rightTrigger);
-            } else {
-//                lift.liftStop();
+                lift.up(rightTrigger*liftPowerFactor);
             }
             lift.update();;
         }

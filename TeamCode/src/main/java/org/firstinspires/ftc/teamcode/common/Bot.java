@@ -19,11 +19,15 @@ public class Bot extends Component {
     private double shoulderRUpPos = 1.0;
     //    private double shoulderRMidPos = 0.5;
     private double shoulderRDownPos = 0.15;
-    private double shoulderLUpPos = 0.9;
+    private double shoulderLUpPos = 0.95;
     //    private double shoulderLMidPos = 0.5;
     private double shoulderLDownPos = 0.0;
 
-    private double wristUpPos = 0.9;
+    // Value when full should range is enabled
+//    private double wristUpPos = 0.9;
+
+    private double wristUpPos = 0.5;
+
     private double wristDownPos = 0.15;
     private double launcherLockPos = 0.75;
     private double launcherReleasePos = 0.25;
@@ -59,7 +63,7 @@ public class Bot extends Component {
         launcher.setDirection(Servo.Direction.FORWARD);
         launcher.setPosition(launcherLockPos);
 
-        dropperDeploy();
+        dropperRetract();
     }
 
 
@@ -69,18 +73,20 @@ public class Bot extends Component {
     }
 
     public void dropperDeploy() {
-        lift.setTargetPos(450);
+        lift.goToRetractPosition();
         wrist.setPosition(wristUpPos);
         shoulderL.setPosition(shoulderLUpPos);
         shoulderR.setPosition(shoulderRUpPos);
+        lift.goToPositionSychronous(0);
         dropperDeployed = true;
     }
 
     public void dropperRetract() {
-        lift.setTargetPos(250);
+        lift.goToRetractPosition();
         wrist.setPosition(wristDownPos);
         shoulderL.setPosition(shoulderLDownPos);
         shoulderR.setPosition(shoulderRDownPos);
+        lift.goToPositionSychronous(0);
         dropperDeployed = false;
     }
 
@@ -125,7 +131,7 @@ public class Bot extends Component {
         if (dropper.fullyLoaded() && loading)
         {
             loading = false;
-            dropper.stopLoad();
+            stopLoad();
         }
     }
 }
