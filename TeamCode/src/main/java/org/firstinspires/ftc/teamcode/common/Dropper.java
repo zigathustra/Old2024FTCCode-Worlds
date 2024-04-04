@@ -51,8 +51,7 @@ public class Dropper extends Component {
         }
     }
 
-    public void load() {
-        unlockServos();
+    public void load() {unlockServos();
     }
 
     private int countPixels() {

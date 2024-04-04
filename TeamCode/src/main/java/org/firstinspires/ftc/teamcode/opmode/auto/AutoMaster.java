@@ -69,7 +69,7 @@ public abstract class AutoMaster extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        bot = new AutoBot(hardwareMap, telemetry, determineStartPose(), loggingOn);
+        bot = new AutoBot(hardwareMap, this, determineStartPose(), loggingOn);
 
         visionSensor = new VisionSensor(this, alliance);
 

@@ -17,8 +17,6 @@ public class TeleOpNormal extends LinearOpMode {
 
     public static boolean loggingOn = false;
 
-    public static double liftPowerFactor = 0.5;
-
     @Override
     public void runOpMode() {
 
@@ -30,7 +28,7 @@ public class TeleOpNormal extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        bot = new TeleopBot(hardwareMap, telemetry, loggingOn);
+        bot = new TeleopBot(hardwareMap, this, loggingOn);
         waitForStart();
 
         while (opModeIsActive()) {
@@ -55,14 +53,14 @@ public class TeleOpNormal extends LinearOpMode {
             leftTrigger = gamepad1.left_trigger;
             rightTrigger = gamepad1.right_trigger;
             if (leftTrigger > 0.3) {
-                bot.liftDown(leftTrigger*liftPowerFactor);
+                bot.liftDown(leftTrigger);
             } else if (rightTrigger > 0.3) {
-                bot.liftUp(rightTrigger*liftPowerFactor);
+                bot.liftUp(rightTrigger);
             }
 
-            if (gamepad1.y) {
+            if (gamepad1.triangle) {
                 bot.dropperDeploy();
-            } else if (gamepad1.b) {
+            } else if (gamepad1.circle) {
                 bot.dropperRetract();
             }
 

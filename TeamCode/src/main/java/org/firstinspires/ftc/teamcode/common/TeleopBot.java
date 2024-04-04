@@ -1,14 +1,15 @@
 package org.firstinspires.ftc.teamcode.common;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class TeleopBot extends Bot {
     private TeleopDrivetrain drivetrain = null;
-    public TeleopBot(HardwareMap hardwareMap, Telemetry telemetry, boolean loggingOn)
+    public TeleopBot(HardwareMap hardwareMap, LinearOpMode opMode, boolean loggingOn)
     {
-        super(hardwareMap, telemetry, loggingOn);
+        super(hardwareMap, opMode, loggingOn);
         drivetrain = new TeleopDrivetrain(hardwareMap, telemetry, loggingOn);
     }
 

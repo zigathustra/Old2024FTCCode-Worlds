@@ -19,19 +19,19 @@ public class IntakeTest extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        bot = new TeleopBot(hardwareMap, telemetry, loggingOn);
+        bot = new TeleopBot(hardwareMap, this, loggingOn);
         waitForStart();
 
         while (opModeIsActive()) {
 
-            if (gamepad1.triangle) {
+            if (gamepad1.right_bumper) {
                 bot.load();
-            } else if (gamepad1.x) {
+            } else if (gamepad1.left_bumper) {
                 bot.stopLoad();
             }
 
             if(gamepad1.start){
-                bot.launcherRelease();
+                bot.launcherUnlock();
             } else if(gamepad1.share) {
                 bot.launcherLock();
             }

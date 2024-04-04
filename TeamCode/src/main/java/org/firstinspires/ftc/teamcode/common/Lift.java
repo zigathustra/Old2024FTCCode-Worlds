@@ -14,34 +14,32 @@ import org.firstinspires.ftc.teamcode.common.hardware_data.GoBilda435DcMotorData
 public class Lift extends Component {
     private final DcMotorEx liftMotorL;
     private final DcMotorEx liftMotorR;
-    private final PIDFController pidf;
-    //    private final PIDFController pidfR;
-    public static double kP = 0.01;
+    private final PIDFController pidfL;
+    private final PIDFController pidfR;
+    public static double kP = 0.03;
     public static double kI = 0.0;
     public static double kD = 0.001;
-    public static double kF = 0.0;
-    private double positionTolerance = 10;
-    private double derivativeTolerance = 10;
-    public static double maxVelocity = GoBilda435DcMotorData.maxTicksPerSec;
-    public static int maxPos = 1500;
-    public static int retractPos = 800;
+    public static double kF = 0.00037;
+    private final double positionTolerance = 10;
+    private final double derivativeTolerance = 10;
+    private final double maxVelocity = GoBilda435DcMotorData.maxTicksPerSec;
+    private final int maxPos = 2000;
+    private final int retractPos = 800;
+    private final int deployPos = 1000;
     private final int minPos = 0;
-    public static final int defaultPosition = 250;
-    public static int targetPos = defaultPosition;
-    public static double defaultPowerFactor = 0.5;
-    public static double powerFactor = defaultPowerFactor;
-    public static boolean busy;
-    public static double power = 0.0;
-    public static int increment = 50;
+    public static int targetPos = 250;
+    private final double defaultMaxPower = 0.5;
+    private double maxPower = defaultMaxPower;
+    private final int increment = 50;
     public static int currentPos;
 
 
-    public Lift(HardwareMap hardwareMap, Telemetry telemetry, boolean loggingOn)
-    {
+    public Lift(HardwareMap hardwareMap, Telemetry telemetry, boolean loggingOn) {
         super(telemetry, loggingOn);
-        pidf = new PIDFController(kP, kI, kD, kF);
-
-        pidf.setTolerance(positionTolerance);
+        pidfL = new PIDFController(kP, kI, kD, kF);
+        pidfL.setTolerance(positionTolerance);
+        pidfR = new PIDFController(kP, kI, kD, kF);
+        pidfR.setTolerance(positionTolerance);
 
         liftMotorL = hardwareMap.get(DcMotorEx.class, "liftLeft");
         liftMotorR = hardwareMap.get(DcMotorEx.class, "liftRight");
@@ -62,10 +60,14 @@ public class Lift extends Component {
     }
 
     public void update() {
-        pidf.setD(kD);
-        pidf.setF(kF);
-        pidf.setI(kI);
-        pidf.setP(kP);
+        pidfL.setD(kD);
+        pidfL.setF(kF);
+        pidfL.setI(kI);
+        pidfL.setP(kP);
+        pidfR.setD(kD);
+        pidfR.setF(kF);
+        pidfR.setI(kI);
+        pidfR.setP(kP);
 
         setPIDFMotorPower();
         if (loggingOn) {
@@ -73,15 +75,15 @@ public class Lift extends Component {
         }
     }
 
-    public void up(double powerFactor) {
-        this.powerFactor = powerFactor;
+    public void up(double maxPower) {
+        this.maxPower = maxPower;
         if (!atTop()) {
             targetPos = targetPos + increment;
         }
     }
 
-    public void down(double powerFactor) {
-        this.powerFactor = powerFactor;
+    public void down(double maxPower) {
+        this.maxPower = maxPower;
         if (!atBottom()) {
             targetPos = targetPos - increment;
         }
@@ -95,9 +97,14 @@ public class Lift extends Component {
         }
     }
 
-    public void goToRetractPosition()
-    {
-        goToPositionSychronous(retractPos);
+    public void goToRetractPosition() {
+        setTargetPos(retractPos);
+    }
+    public void goToMinPosition() {
+        setTargetPos(minPos);
+    }
+    public void goToDeployPosition() {
+        setTargetPos(deployPos);
     }
 
     private boolean atTop() {
@@ -109,7 +116,7 @@ public class Lift extends Component {
     }
 
     boolean isBusy() {
-        return !pidf.atSetPoint();
+        return (!pidfL.atSetPoint() || !pidfR.atSetPoint());
     }
 
     private boolean atBottom() {
@@ -118,6 +125,19 @@ public class Lift extends Component {
         } else {
             return false;
         }
+    }
+
+    public void setMotorsPower(double power) {
+        liftMotorL.setPower(power * maxPower);
+        liftMotorR.setPower(power * maxPower);
+    }
+
+    public void setLMotorPower(double power) {
+        liftMotorL.setPower(power * maxPower);
+    }
+
+    public void setRMotorPower(double power) {
+        liftMotorR.setPower(power * maxPower);
     }
 
     public void setTargetPos(int targetPos) {
@@ -135,19 +155,17 @@ public class Lift extends Component {
     }
 
     private void setPIDFMotorPower() {
-        power = pidf.calculate(avgCurrentPos(), targetPos) * powerFactor;
-        power = power * powerFactor;
-        liftMotorL.setPower(power);
-        liftMotorR.setPower(power);
+        setLMotorPower(pidfL.calculate(liftMotorL.getCurrentPosition(), targetPos));
+        setRMotorPower(pidfR.calculate(liftMotorR.getCurrentPosition(), targetPos));
     }
 
     private void logTelemetry() {
         telemetry.addData("PositionL:  ", liftMotorL.getCurrentPosition());
         telemetry.addData("PositionR:  ", liftMotorR.getCurrentPosition());
         telemetry.addData("Target:  ", targetPos);
-        telemetry.addData("Power target: ", power);
         telemetry.addData("PowerL:  ", liftMotorL.getPower());
         telemetry.addData("PowerR:  ", liftMotorR.getPower());
+        telemetry.addData("Busy:  ", isBusy());
         telemetry.update();
     }
     /*
@@ -156,7 +174,7 @@ public class Lift extends Component {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             if (!initialized) {
-                up(powerFactor);
+                up(maxPower);
                 initialized = true;
             }
 

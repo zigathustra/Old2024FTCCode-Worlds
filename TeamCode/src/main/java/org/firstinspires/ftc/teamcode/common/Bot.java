@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.common;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Bot extends Component {
-    protected Telemetry telemetry = null;
     private Intake intake = null;
     protected Lift lift = null;
     private Servo shoulderL = null;
@@ -18,26 +19,27 @@ public class Bot extends Component {
 
     private double shoulderRUpPos = 1.0;
     //    private double shoulderRMidPos = 0.5;
-    private double shoulderRDownPos = 0.15;
+    private double shoulderRDownPos = 0.25;
     private double shoulderLUpPos = 0.95;
-    //    private double shoulderLMidPos = 0.5;
-    private double shoulderLDownPos = 0.0;
+     //    private double shoulderLMidPos = 0.5;
+    private double shoulderLDownPos = 0.1;
 
-    // Value when full should range is enabled
+    // Value when full shoulder range is enabled
 //    private double wristUpPos = 0.9;
 
     private double wristUpPos = 0.5;
-
     private double wristDownPos = 0.15;
     private double launcherLockPos = 0.75;
-    private double launcherReleasePos = 0.25;
+    private double launcherUnlockPos = 0.25;
     private boolean loading = false;
 
     protected boolean loggingOn;
+    private LinearOpMode opMode;
 
 
-    public Bot(HardwareMap hardwareMap, Telemetry telemetry, boolean loggingOn) {
-        super(telemetry, loggingOn);
+    public Bot(HardwareMap hardwareMap, LinearOpMode opMode, boolean loggingOn) {
+        super(opMode.telemetry, loggingOn);
+        this.opMode = opMode;
         // Intake
         intake = new Intake(hardwareMap, telemetry, loggingOn);
 
@@ -57,13 +59,12 @@ public class Bot extends Component {
         // Dropper
         dropper = new Dropper(hardwareMap, telemetry, loggingOn);
         loading = false;
+        dropperRetract();
 
         // Launcher
         launcher = hardwareMap.get(Servo.class, "launcher");
         launcher.setDirection(Servo.Direction.FORWARD);
-        launcher.setPosition(launcherLockPos);
-
-        dropperRetract();
+        launcherLock();
     }
 
     public void dropPixel()
@@ -72,20 +73,22 @@ public class Bot extends Component {
     }
 
     public void dropperDeploy() {
-        lift.goToRetractPosition();
+        lift.goToDeployPosition();
+        opMode.sleep(250);
         wrist.setPosition(wristUpPos);
         shoulderL.setPosition(shoulderLUpPos);
         shoulderR.setPosition(shoulderRUpPos);
-        lift.goToPositionSychronous(0);
         dropperDeployed = true;
     }
 
     public void dropperRetract() {
         lift.goToRetractPosition();
+        opMode.sleep(250);
         wrist.setPosition(wristDownPos);
         shoulderL.setPosition(shoulderLDownPos);
         shoulderR.setPosition(shoulderRDownPos);
-        lift.goToPositionSychronous(0);
+        opMode.sleep(250);
+        lift.goToMinPosition();
         dropperDeployed = false;
     }
 
@@ -119,8 +122,8 @@ public class Bot extends Component {
         launcher.setPosition(launcherLockPos);
     }
 
-    public void launcherRelease() {
-        launcher.setPosition(launcherReleasePos);
+    public void launcherUnlock() {
+        launcher.setPosition(launcherUnlockPos);
     }
 
     public void update() {

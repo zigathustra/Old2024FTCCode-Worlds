@@ -31,13 +31,13 @@ public class LiftMotorTest extends LinearOpMode {
     public static double powerFactor = defaultPowerFactor;
     public static boolean busy;
     public static double power = 0.0;
-
     public static int currentPos;
 
     private PIDFController pidf = new PIDFController(kP, kI, kD, kF);
 
-    public LiftMotorTest() {
+    private double maxPower = 0.5;
 
+    public LiftMotorTest() {
     }
 
     @Override
@@ -57,34 +57,48 @@ public class LiftMotorTest extends LinearOpMode {
         liftMotorL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftMotorR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        setTargetPos(retractPos);
-
         double leftTrigger = 0.0;
         double rightTrigger = 0.0;
 
-        targetPos = 500;
+        logTelemetry();
         waitForStart();
 
         while (opModeIsActive()) {
 
-/*            leftTrigger = gamepad1.left_trigger;
+            leftTrigger = gamepad1.left_trigger;
             rightTrigger = gamepad1.right_trigger;
             if (leftTrigger > 0.3) {
-                liftMotorL.setPower(leftTrigger);
-                liftMotorR.setPower(leftTrigger);
+                liftMotorL.setPower(-power);
+                liftMotorR.setPower(-power);
 
             } else if (rightTrigger > 0.3) {
-                liftMotorL.setPower(rightTrigger);
-                liftMotorR.setPower(rightTrigger);
-            } else {
-//                liftMotorL.setPower(0);
-//                liftMotorR.setPower(0);
+                liftMotorL.setPower(power);
+                liftMotorR.setPower(power);
+            } else
+            {
+                liftMotorL.setPower(0.0);
+                liftMotorR.setPower(0.0);
             }
 
- */
-            update();
+            if (gamepad1.right_bumper) {
+                power = power + 0.005;
+            } else if (gamepad1.left_bumper) {
+                power = power - 0.005;
+            }
+
+            logTelemetry();
+            sleep(50);
         }
     }
+
+    public void logTelemetry() {
+        telemetry.addData("power: ", power);
+        telemetry.addData("power*maxPower: ", power * maxPower);
+        telemetry.addData("right bumper = power up: ", 0);
+        telemetry.addData("left bumper = power down: ", 0);
+        telemetry.update();
+    }
+
 
     public void update() {
         pidf.setD(kD);
@@ -156,7 +170,7 @@ public class LiftMotorTest extends LinearOpMode {
 
     private void setPIDFMotorPower() {
         //if (!pidf.atSetPoint()) {
-            power = pidf.calculate(avgCurrentPos(), targetPos) * powerFactor;
+        power = pidf.calculate(avgCurrentPos(), targetPos) * powerFactor;
         //}
 
         liftMotorL.setPower(power);
