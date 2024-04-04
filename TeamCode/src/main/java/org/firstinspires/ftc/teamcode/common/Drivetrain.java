@@ -7,23 +7,19 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class Drivetrain {
-    protected Telemetry telemetry;
+public class Drivetrain extends Component {
     public final DcMotorEx leftFrontDrive;
     public final DcMotorEx rightFrontDrive;
     public final DcMotorEx leftBackDrive;
     public final DcMotorEx rightBackDrive;
-    protected final double maxNormalPowerFactor = 0.75;
-    protected final double maxSlowedPowerFactor = 0.5;
-    protected final double maxCreepPowerFactor = 0.35;
-    protected double maxPowerFactor =  maxNormalPowerFactor;
-    protected boolean loggingOn;
+    protected final double maxNormalPower = 0.75;
+    protected final double maxCreepPower = 0.35;
+    protected double maxPower =  maxNormalPower;
 
     protected Drivetrain(HardwareMap hardwareMap, Telemetry telemetry, boolean loggingOn)
     {
-        this.telemetry = telemetry;
-        this.loggingOn = loggingOn;
-
+        super(telemetry, loggingOn);
+        
         leftFrontDrive = hardwareMap.get(DcMotorEx.class, "leftFrontDrive");
         leftBackDrive = hardwareMap.get(DcMotorEx.class, "leftBackDrive");
         rightFrontDrive = hardwareMap.get(DcMotorEx.class, "rightFrontDrive");
@@ -35,14 +31,15 @@ public class Drivetrain {
         rightBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
 
         setBrakingOn();
+        setToNormalPower();
     }
-    public void setToNormalPowerFactor()
+    public void setToNormalPower()
     {
-        maxPowerFactor = maxNormalPowerFactor;
+        maxPower = maxNormalPower;
     }
 
-    public void setToSlowedPowerFactor(){
-        maxPowerFactor = maxSlowedPowerFactor;
+    public void setToCreepPower(){
+        maxPower = maxCreepPower;
     }
     protected void setBrakingOn() {
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -56,5 +53,10 @@ public class Drivetrain {
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+    }
+
+    public void update()
+    {
+
     }
 }

@@ -1,18 +1,14 @@
 package org.firstinspires.ftc.teamcode.common;
 
-import androidx.annotation.NonNull;
-
 import com.acmerobotics.dashboard.config.Config;
 
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Action;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.common.config.GoBilda435DcMotorData;
+import org.firstinspires.ftc.teamcode.common.hardware_data.GoBilda435DcMotorData;
 
 @Config
 public class Lift extends Component {

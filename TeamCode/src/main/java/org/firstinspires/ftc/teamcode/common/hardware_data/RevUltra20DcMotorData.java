@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.common.config;
+package org.firstinspires.ftc.teamcode.common.hardware_data;
 
 public class RevUltra20DcMotorData {
 

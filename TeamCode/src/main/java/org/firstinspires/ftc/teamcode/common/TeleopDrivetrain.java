@@ -8,11 +8,12 @@ public class TeleopDrivetrain extends Drivetrain {
 
     public TeleopDrivetrain(HardwareMap hardwareMap, Telemetry telemetry, boolean loggingOn) {
         super(hardwareMap, telemetry, loggingOn);
-
     }
 
     public void creepDirection(double axial, double strafe, double yaw) {
-        moveDirection(axial * maxCreepPowerFactor, strafe * maxCreepPowerFactor, yaw * maxCreepPowerFactor);
+        setToCreepPower();
+        moveDirection(axial, strafe, yaw);
+        setToNormalPower();
     }
     public void moveDirection(double axial, double strafe, double yaw) {
         // Calculate wheel powers.
@@ -33,10 +34,10 @@ public class TeleopDrivetrain extends Drivetrain {
             rightBackPower /= max;
         }
 
-        leftFrontDrive.setPower(leftFrontPower * maxPowerFactor);
-        rightFrontDrive.setPower(rightFrontPower * maxPowerFactor);
-        leftBackDrive.setPower(leftBackPower * maxPowerFactor);
-        rightBackDrive.setPower(rightBackPower * maxPowerFactor);
+        leftFrontDrive.setPower(leftFrontPower * maxPower);
+        rightFrontDrive.setPower(rightFrontPower * maxPower);
+        leftBackDrive.setPower(leftBackPower * maxPower);
+        rightBackDrive.setPower(rightBackPower * maxPower);
     }
 
     public void stop() {
@@ -45,6 +46,4 @@ public class TeleopDrivetrain extends Drivetrain {
         rightFrontDrive.setPower(0.0);
         rightBackDrive.setPower(0.0);
     }
-
-
 }

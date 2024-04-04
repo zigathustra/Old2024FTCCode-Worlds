@@ -37,7 +37,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.common.config.GoBilda312DcMotorData;
+import org.firstinspires.ftc.teamcode.common.hardware_data.GoBilda312DcMotorData;
 import org.firstinspires.ftc.teamcode.odometry.Drawing;
 import org.firstinspires.ftc.teamcode.odometry.Localizer;
 import org.firstinspires.ftc.teamcode.odometry.ThreeDeadWheelLocalizer;
@@ -55,7 +55,6 @@ import java.util.List;
 @Config
 public class AutoDrivetrain extends Drivetrain{
 
-    private double inPerTick = GoBilda312DcMotorData.wheelInchesPerTick;
     public static class Params {
         // IMU orientation
         public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
@@ -115,98 +114,10 @@ public class AutoDrivetrain extends Drivetrain{
     public Pose2d pose;
 
     private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
-
     private final DownsampledWriter estimatedPoseWriter = new DownsampledWriter("ESTIMATED_POSE", 50_000_000);
     private final DownsampledWriter targetPoseWriter = new DownsampledWriter("TARGET_POSE", 50_000_000);
     private final DownsampledWriter driveCommandWriter = new DownsampledWriter("DRIVE_COMMAND", 50_000_000);
     private final DownsampledWriter mecanumCommandWriter = new DownsampledWriter("MECANUM_COMMAND", 50_000_000);
-
-    public class DriveLocalizer implements Localizer {
-        public final Encoder leftFrontEncoder, leftBackEncoder, rightBackEncoder, rightFrontEncoder;
-        public final IMU imu;
-
-        private int lastLeftFrontPos, lastLeftBackPos, lastRightBackPos, lastRightFrontPos;
-        private Rotation2d lastHeading;
-        private boolean initialized;
-
-        public DriveLocalizer() {
-            leftFrontEncoder = new OverflowEncoder(new RawEncoder(AutoDrivetrain.this.leftFrontDrive));
-            leftBackEncoder = new OverflowEncoder(new RawEncoder(AutoDrivetrain.this.leftBackDrive));
-            rightBackEncoder = new OverflowEncoder(new RawEncoder(AutoDrivetrain.this.rightBackDrive));
-            rightFrontEncoder = new OverflowEncoder(new RawEncoder(AutoDrivetrain.this.rightFrontDrive));
-
-            imu = lazyImu.get();
-
-
-//            leftFrontDrive.setDirection(DcMotorEx.Direction.REVERSE);
-//            leftBackDrive.setDirection(DcMotorEx.Direction.REVERSE);
-//            rightFrontDrive.setDirection(DcMotorEx.Direction.REVERSE);
-//            rightBackDrive.setDirection(DcMotorEx.Direction.REVERSE);
-        }
-
-        @Override
-        public Twist2dDual<Time> update() {
-            PositionVelocityPair leftFrontPosVel = leftFrontEncoder.getPositionAndVelocity();
-            PositionVelocityPair leftBackPosVel = leftBackEncoder.getPositionAndVelocity();
-            PositionVelocityPair rightBackPosVel = rightBackEncoder.getPositionAndVelocity();
-            PositionVelocityPair rightFrontPosVel = rightFrontEncoder.getPositionAndVelocity();
-
-            YawPitchRollAngles angles = imu.getRobotYawPitchRollAngles();
-
-            FlightRecorder.write("MECANUM_LOCALIZER_INPUTS", new MecanumLocalizerInputsMessage(
-                    leftFrontPosVel, leftBackPosVel, rightBackPosVel, rightFrontPosVel, angles));
-
-            Rotation2d heading = Rotation2d.exp(angles.getYaw(AngleUnit.RADIANS));
-
-            if (!initialized) {
-                initialized = true;
-
-                lastLeftFrontPos = leftFrontPosVel.position;
-                lastLeftBackPos = leftBackPosVel.position;
-                lastRightBackPos = rightBackPosVel.position;
-                lastRightFrontPos = rightFrontPosVel.position;
-
-                lastHeading = heading;
-
-                return new Twist2dDual<>(
-                        Vector2dDual.constant(new Vector2d(0.0, 0.0), 2),
-                        DualNum.constant(0.0, 2)
-                );
-            }
-
-            double headingDelta = heading.minus(lastHeading);
-            Twist2dDual<Time> twist = kinematics.forward(new MecanumKinematics.WheelIncrements<>(
-                    new DualNum<Time>(new double[]{
-                            (leftFrontPosVel.position - lastLeftFrontPos),
-                            leftFrontPosVel.velocity,
-                    }).times(PARAMS.inPerTick),
-                    new DualNum<Time>(new double[]{
-                            (leftBackPosVel.position - lastLeftBackPos),
-                            leftBackPosVel.velocity,
-                    }).times(PARAMS.inPerTick),
-                    new DualNum<Time>(new double[]{
-                            (rightBackPosVel.position - lastRightBackPos),
-                            rightBackPosVel.velocity,
-                    }).times(PARAMS.inPerTick),
-                    new DualNum<Time>(new double[]{
-                            (rightFrontPosVel.position - lastRightFrontPos),
-                            rightFrontPosVel.velocity,
-                    }).times(PARAMS.inPerTick)
-            ));
-
-            lastLeftFrontPos = leftFrontPosVel.position;
-            lastLeftBackPos = leftBackPosVel.position;
-            lastRightBackPos = rightBackPosVel.position;
-            lastRightFrontPos = rightFrontPosVel.position;
-
-            lastHeading = heading;
-
-            return new Twist2dDual<>(
-                    twist.line,
-                    DualNum.cons(headingDelta, twist.angle.drop(1))
-            );
-        }
-    }
 
     public AutoDrivetrain(HardwareMap hardwareMap, Telemetry telemetry, Pose2d pose, boolean loggingOn) {
         super(hardwareMap, telemetry, loggingOn);

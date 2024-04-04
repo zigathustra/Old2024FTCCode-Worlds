@@ -66,7 +66,6 @@ public class Bot extends Component {
         dropperRetract();
     }
 
-
     public void dropPixel()
     {
         dropper.dropPixel();

@@ -41,7 +41,8 @@ public final class TuningOpModes {
 
     public static boolean loggingOn = true;
 
-    private TuningOpModes() {}
+    private TuningOpModes() {
+    }
 
     private static OpModeMeta metaForClass(Class<? extends OpMode> cls) {
         return new OpModeMeta.Builder()
@@ -62,27 +63,13 @@ public final class TuningOpModes {
 
                 List<Encoder> leftEncs = new ArrayList<>(), rightEncs = new ArrayList<>();
                 List<Encoder> parEncs = new ArrayList<>(), perpEncs = new ArrayList<>();
-                if (md.localizer instanceof AutoDrivetrain.DriveLocalizer) {
-                    AutoDrivetrain.DriveLocalizer dl = (AutoDrivetrain.DriveLocalizer) md.localizer;
-                    leftEncs.add(dl.leftFrontEncoder);
-                    leftEncs.add(dl.leftBackEncoder);
-                    rightEncs.add(dl.rightFrontEncoder);
-                    rightEncs.add(dl.rightBackEncoder);
-                } else if (md.localizer instanceof ThreeDeadWheelLocalizer) {
-                    ThreeDeadWheelLocalizer dl = (ThreeDeadWheelLocalizer) md.localizer;
-                    parEncs.add(dl.par0);
-                    parEncs.add(dl.par1);
-                    perpEncs.add(dl.perp);
-                } else if (md.localizer instanceof TwoDeadWheelLocalizer) {
-                    TwoDeadWheelLocalizer dl = (TwoDeadWheelLocalizer) md.localizer;
-                    parEncs.add(dl.par);
-                    perpEncs.add(dl.perp);
-                } else {
-                    throw new RuntimeException("unknown localizer: " + md.localizer.getClass().getName());
-                }
+                ThreeDeadWheelLocalizer dl = (ThreeDeadWheelLocalizer) md.localizer;
+                parEncs.add(dl.par0);
+                parEncs.add(dl.par1);
+                perpEncs.add(dl.perp);
 
                 return new DriveView(
-                    DriveType.MECANUM,
+                        DriveType.MECANUM,
                         AutoDrivetrain.PARAMS.inPerTick,
                         AutoDrivetrain.PARAMS.maxWheelVel,
                         AutoDrivetrain.PARAMS.minProfileAccel,
