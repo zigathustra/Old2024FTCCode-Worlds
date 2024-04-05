@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.common;
 import com.acmerobotics.dashboard.config.Config;
 
 import com.arcrobotics.ftclib.controller.PIDFController;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -16,10 +17,10 @@ public class Lift extends Component {
     private final DcMotorEx liftMotorR;
     private final PIDFController pidfL;
     private final PIDFController pidfR;
-    public static double kP = 0.03;
+    public static double kP = 0.015;
     public static double kI = 0.0;
-    public static double kD = 0.001;
-    public static double kF = 0.00037;
+    public static double kD = 0.0005;
+    public static double kF = 0.0001;
     private final double positionTolerance = 10;
     private final double derivativeTolerance = 10;
     private final double maxVelocity = GoBilda435DcMotorData.maxTicksPerSec;
@@ -28,6 +29,9 @@ public class Lift extends Component {
     private final int deployPos = 1000;
     private final int minPos = 0;
     public static int targetPos = 250;
+
+    private int autoOffset = 0;
+    private int manualOffset = 25;
     private final double defaultMaxPower = 1.0;
     private double maxPower = defaultMaxPower;
 //    private final int increment = 50;
@@ -87,7 +91,7 @@ public class Lift extends Component {
 
     public void manualUp(double power)
     {
-        if (!atTop())
+        if (!atTop(manualOffset))
         {
             setMotorsPower(power);
         } else
@@ -98,9 +102,9 @@ public class Lift extends Component {
 
     public void manualDown(double power)
     {
-        if (!atBottom())
+        if (!atBottom(manualOffset))
         {
-            setMotorsPower(power);
+            setMotorsPower(-power);
         } else
         {
             stop();
@@ -124,8 +128,8 @@ public class Lift extends Component {
         setTargetPos(deployPos);
     }
 
-    private boolean atTop() {
-        if (liftMotorL.getCurrentPosition() >= maxPos) {
+    private boolean atTop(int offset) {
+        if ((liftMotorL.getCurrentPosition() - offset) >= maxPos) {
             return true;
         } else {
             return false;
@@ -136,8 +140,8 @@ public class Lift extends Component {
         return (!pidfL.atSetPoint() || !pidfR.atSetPoint());
     }
 
-    private boolean atBottom() {
-        if (liftMotorL.getCurrentPosition() <= minPos) {
+    private boolean atBottom(int offset) {
+        if ((liftMotorL.getCurrentPosition() + offset) <= minPos) {
             return true;
         } else {
             return false;
@@ -189,7 +193,7 @@ public class Lift extends Component {
         telemetry.addData("PowerL:  ", liftMotorL.getPower());
         telemetry.addData("PowerR:  ", liftMotorR.getPower());
         telemetry.addData("Busy:  ", isBusy());
-        telemetry.update();
+ //        telemetry.update();
     }
     /*
     public class LiftUp implements Action {

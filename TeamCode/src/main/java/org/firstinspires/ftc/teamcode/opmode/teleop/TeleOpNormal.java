@@ -29,7 +29,7 @@ public class TeleOpNormal extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        bot = new TeleopBot(hardwareMap, this, loggingOn);
+        bot = new TeleopBot(hardwareMap, telemetry, loggingOn);
         waitForStart();
 
         while (opModeIsActive()) {
@@ -78,8 +78,15 @@ public class TeleOpNormal extends LinearOpMode {
                 bot.dropPixel();
                 sleep(200);
             }
-            bot.update();
 
+            if (gamepad1.start)
+            {
+                bot.intakeOn();
+            } else if (gamepad1.share)
+            {
+                bot.intakeOff();
+            }
+            bot.update();
         }
 
     }

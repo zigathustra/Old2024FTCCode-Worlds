@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.common.Intake;
 import org.firstinspires.ftc.teamcode.common.TeleopBot;
 
 @Config
@@ -12,30 +13,32 @@ import org.firstinspires.ftc.teamcode.common.TeleopBot;
 
 public class IntakeTest extends LinearOpMode {
 
-    private TeleopBot bot;
+    private Intake intake;
 
     public static boolean loggingOn = false;
 
     @Override
     public void runOpMode() {
 
-        bot = new TeleopBot(hardwareMap, this, loggingOn);
+        intake = new Intake(hardwareMap, telemetry, true);
         waitForStart();
 
         while (opModeIsActive()) {
 
             if (gamepad1.right_bumper) {
-                bot.load();
+                intake.up();
             } else if (gamepad1.left_bumper) {
-                bot.stopLoad();
+                intake.down();
             }
 
-            if(gamepad1.start){
-                bot.launcherUnlock();
-            } else if(gamepad1.share) {
-                bot.launcherLock();
+            if (gamepad1.a)
+                intake.forward();
+            else if (gamepad1.x)
+            {
+                intake.stop();
             }
-            bot.update();
+
+            intake.update();
         }
     }
 }

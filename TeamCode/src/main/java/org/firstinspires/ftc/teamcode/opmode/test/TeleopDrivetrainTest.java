@@ -22,7 +22,7 @@ public class TeleopDrivetrainTest extends LinearOpMode {
         double driveStrafe = 0.0;
         double driveYaw = 0.0;
 
-        bot = new TeleopBot(hardwareMap, this, loggingOn);
+        bot = new TeleopBot(hardwareMap, telemetry, loggingOn);
         waitForStart();
 
         while (opModeIsActive() && !gamepad1.ps) {

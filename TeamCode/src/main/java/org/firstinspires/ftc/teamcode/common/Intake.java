@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.common;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -10,11 +11,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Intake extends Component {
     private final DcMotorEx intakeMotor;
     private final Servo intakeServo;
-
     private final double upPos = 1.0;
-    private final double downPos = 0.35;
+    private final double downPos = 0.15;
     private final double power = 0.00;
-
 
     public Intake(HardwareMap hardwareMap, Telemetry telemetry, boolean loggingOn) {
         super(telemetry, loggingOn);
@@ -39,16 +38,20 @@ public class Intake extends Component {
         stop();
         up();
     }
-    private void up()
+    public void up()
     {
         intakeServo.setPosition(upPos);
     }
-    private void down()
+    public void down()
     {
         intakeServo.setPosition(downPos);
     }
 
-    private void forward()
+    public void forward()
+    {
+        intakeMotor.setPower(power);
+    }
+    public void manualForward(double power)
     {
         intakeMotor.setPower(power);
     }
@@ -56,7 +59,7 @@ public class Intake extends Component {
     {
         intakeMotor.setPower(-power);
     }
-    private void stop()
+    public void stop()
     {
         intakeMotor.setPower(0.0);
     }

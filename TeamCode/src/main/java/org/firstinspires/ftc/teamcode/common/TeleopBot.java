@@ -7,9 +7,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class TeleopBot extends Bot {
     private TeleopDrivetrain drivetrain = null;
-    public TeleopBot(HardwareMap hardwareMap, LinearOpMode opMode, boolean loggingOn)
+    public TeleopBot(HardwareMap hardwareMap, Telemetry telemetry, boolean loggingOn)
     {
-        super(hardwareMap, opMode, loggingOn);
+        super(hardwareMap, telemetry, loggingOn);
         drivetrain = new TeleopDrivetrain(hardwareMap, telemetry, loggingOn);
     }
 

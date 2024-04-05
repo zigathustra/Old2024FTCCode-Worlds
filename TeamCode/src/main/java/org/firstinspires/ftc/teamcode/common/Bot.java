@@ -18,16 +18,17 @@ public class Bot extends Component {
     private Servo wrist = null;
     private Dropper dropper = null;
     private Servo launcher = null;
-    private boolean handlerDeployed = false;
-    private boolean handlerDeploying = false;
-    private boolean handlerRetracting = false;
+    public static boolean handlerDeployed = false;
+    public static boolean handlerDeploying = false;
+    public static boolean handlerRetracting = false;
+    public static boolean dropperDeployed = false;
 
     private double shoulderRUpPos = 1.0;
     //    private double shoulderRMidPos = 0.5;
     private double shoulderRDownPos = 0.25;
-    private double shoulderLUpPos = 0.95;
+    private double shoulderLUpPos = 1.0;
     //    private double shoulderLMidPos = 0.5;
-    private double shoulderLDownPos = 0.1;
+    private double shoulderLDownPos = 0.00;
 
     // Value when full shoulder range is enabled
 //    private double wristUpPos = 0.9;
@@ -38,13 +39,10 @@ public class Bot extends Component {
     private double launcherUnlockPos = 0.25;
     private boolean loading = false;
     ElapsedTime timer;
-    protected boolean loggingOn;
-    private LinearOpMode opMode;
 
 
-    public Bot(HardwareMap hardwareMap, LinearOpMode opMode, boolean loggingOn) {
-        super(opMode.telemetry, loggingOn);
-        this.opMode = opMode;
+    public Bot(HardwareMap hardwareMap, Telemetry telemetry, boolean loggingOn) {
+        super(telemetry, true);
         // Intake
         intake = new Intake(hardwareMap, telemetry, loggingOn);
 
@@ -65,6 +63,8 @@ public class Bot extends Component {
         // Dropper
         dropper = new Dropper(hardwareMap, telemetry, loggingOn);
         loading = false;
+        dropperDeployed = true;
+        handlerDeployed = true;
         handlerRetract();
 
         // Launcher
@@ -94,8 +94,6 @@ public class Bot extends Component {
 
     private void liftMin() {
         lift.goToMinPosition();
-        handlerDeployed = false;
-        handlerRetracting = false;
     }
 
     public void handlerDeploy() {
@@ -107,10 +105,7 @@ public class Bot extends Component {
         wrist.setPosition(wristUpPos);
         shoulderL.setPosition(shoulderLUpPos);
         shoulderR.setPosition(shoulderRUpPos);
-        handlerDeploying = false;
-        handlerDeployed = true;
     }
-
 
     public void load() {
         if (!handlerDeployed) {
@@ -155,22 +150,43 @@ public class Bot extends Component {
         launcher.setPosition(launcherUnlockPos);
     }
 
+    public void intakeOn()
+    {
+        intake.manualForward(0.9);
+    }
+
+    public void intakeOff()
+    {
+        intake.stop();
+    }
+
     public void update() {
+        if (loggingOn) {
+            telemetry.addData("handlerDeploying: ", handlerDeploying);
+            telemetry.addData("handlerDeployed: ", handlerDeployed);
+            telemetry.addData("handlerRetracting: ", handlerRetracting);
+            telemetry.addData("dropperDeployed: ", dropperDeployed);
+            telemetry.addData("Time: ", timer.milliseconds());
+        }
+        if (liftAuto) {
+            lift.update();
+        }
         if (!lift.isBusy()) {
             if (handlerDeploying) {
                 dropperDeploy();
+                dropperDeployed = true;
+                handlerDeploying = false;
+                handlerDeployed = true;
             } else if (handlerRetracting) {
-                dropperRetract();
-                if (timer.milliseconds() > 350)
-                {
+                if (dropperDeployed) {
+                    dropperRetract();
+                    dropperDeployed = false;
+                } else if (timer.milliseconds() > 250) {
                     liftMin();
+                    handlerDeployed = false;
+                    handlerRetracting = false;
                 }
             }
-        }
-
-
-        if (liftAuto) {
-            lift.update();
         }
 
         intake.update();
@@ -179,5 +195,6 @@ public class Bot extends Component {
             loading = false;
             stopLoad();
         }
+        telemetry.update();
     }
 }
