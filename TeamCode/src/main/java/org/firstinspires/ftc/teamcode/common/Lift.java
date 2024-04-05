@@ -28,9 +28,9 @@ public class Lift extends Component {
     private final int deployPos = 1000;
     private final int minPos = 0;
     public static int targetPos = 250;
-    private final double defaultMaxPower = 0.5;
+    private final double defaultMaxPower = 1.0;
     private double maxPower = defaultMaxPower;
-    private final int increment = 50;
+//    private final int increment = 50;
     public static int currentPos;
 
 
@@ -60,14 +60,8 @@ public class Lift extends Component {
     }
 
     public void update() {
-        pidfL.setD(kD);
-        pidfL.setF(kF);
-        pidfL.setI(kI);
-        pidfL.setP(kP);
-        pidfR.setD(kD);
-        pidfR.setF(kF);
-        pidfR.setI(kI);
-        pidfR.setP(kP);
+        pidfL.setPIDF(kP,kI,kD,kF);
+        pidfR.setPIDF(kP,kI,kD,kF);
 
         setPIDFMotorPower();
         if (loggingOn) {
@@ -75,35 +69,58 @@ public class Lift extends Component {
         }
     }
 
-    public void up(double maxPower) {
+    /*
+    public void autoUp(double maxPower) {
         this.maxPower = maxPower;
         if (!atTop()) {
             targetPos = targetPos + increment;
         }
     }
 
-    public void down(double maxPower) {
+    public void autoDown(double maxPower) {
         this.maxPower = maxPower;
         if (!atBottom()) {
             targetPos = targetPos - increment;
         }
     }
+    */
 
-    public void goToPositionSychronous(int target) {
-        setTargetPos(target);
-        update();
-        while (isBusy()) {
-            update();
+    public void manualUp(double power)
+    {
+        if (!atTop())
+        {
+            setMotorsPower(power);
+        } else
+        {
+            stop();
         }
     }
 
-    public void goToRetractPosition() {
+    public void manualDown(double power)
+    {
+        if (!atBottom())
+        {
+            setMotorsPower(power);
+        } else
+        {
+            stop();
+        }
+    }
+
+
+    public void stop()
+    {
+        setTargetPos(liftMotorL.getCurrentPosition());
+    }
+    public void goToRetractPosition()
+    {
         setTargetPos(retractPos);
     }
     public void goToMinPosition() {
         setTargetPos(minPos);
     }
-    public void goToDeployPosition() {
+    public void goToDeployPosition()
+    {
         setTargetPos(deployPos);
     }
 
@@ -115,7 +132,7 @@ public class Lift extends Component {
         }
     }
 
-    boolean isBusy() {
+    public boolean isBusy() {
         return (!pidfL.atSetPoint() || !pidfR.atSetPoint());
     }
 
@@ -141,7 +158,13 @@ public class Lift extends Component {
     }
 
     public void setTargetPos(int targetPos) {
-        if (targetPos >= minPos && targetPos <= maxPos) {
+        if (targetPos < minPos) {
+            this.targetPos = minPos;
+        } else if (targetPos > maxPos)
+        {
+            this.targetPos = maxPos;
+        } else
+        {
             this.targetPos = targetPos;
         }
     }

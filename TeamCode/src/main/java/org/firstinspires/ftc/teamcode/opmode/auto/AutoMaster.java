@@ -81,9 +81,8 @@ public abstract class AutoMaster extends LinearOpMode {
 
         visionSensor.goToPropDetectionMode();
 
-        bot.dropperRetract();
+        bot.handlerRetract();
         bot.stopLoad();
-        sleep(500);
 
         leftSpikeTrajectory = bot.drivetrain().actionBuilder(bot.drivetrain().pose)
                 .lineToYSplineHeading(33, Math.toRadians(0))
@@ -98,6 +97,7 @@ public abstract class AutoMaster extends LinearOpMode {
                 .waitSeconds(3)
                 .build();
 
+        sleep(500);
         while (!isStarted() && !isStopRequested()) {
             propDirection = visionSensor.getPropDirection();
 

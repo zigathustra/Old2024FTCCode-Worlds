@@ -21,6 +21,7 @@ public class LiftTest extends LinearOpMode {
     public void runOpMode() {
         double leftTrigger = 0.0;
         double rightTrigger = 0.0;
+        liftPowerFactor = 0.5;
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -32,11 +33,13 @@ public class LiftTest extends LinearOpMode {
             leftTrigger = gamepad1.left_trigger;
             rightTrigger = gamepad1.right_trigger;
             if (leftTrigger > 0.3) {
-                lift.down(leftTrigger*liftPowerFactor);
+                lift.manualDown(leftTrigger*liftPowerFactor);
             } else if (rightTrigger > 0.3) {
-                lift.up(rightTrigger*liftPowerFactor);
+                lift.manualUp(rightTrigger*liftPowerFactor);
+            } else
+            {
+                lift.stop();
             }
-            lift.update();;
         }
     }
 }
