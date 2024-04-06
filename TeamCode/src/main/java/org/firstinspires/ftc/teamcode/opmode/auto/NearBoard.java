@@ -3,13 +3,12 @@ package org.firstinspires.ftc.teamcode.opmode.auto;
 import org.firstinspires.ftc.teamcode.common.enums.Alliance;
 import org.firstinspires.ftc.teamcode.common.enums.ParkPosition;
 import org.firstinspires.ftc.teamcode.common.enums.StartPosition;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-public class FarBoard extends AutoMaster {
+public class NearBoard extends AutoMaster {
 
-    protected FarBoard(Alliance alliance)
+    protected NearBoard(Alliance alliance)
     {
-        super(alliance, StartPosition.FAR, ParkPosition.NONE);
+        super(alliance, StartPosition.NEAR, ParkPosition.NONE);
     }
 
     protected void park(double boardDirection, int targetAprilTagNumber, double parkDirection)

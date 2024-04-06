@@ -1,4 +1,6 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.opmode.auto;
+
+import static org.firstinspires.ftc.teamcode.opmode.auto.AutoConstants.*;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -6,6 +8,8 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.Trajectory;
+import com.acmerobotics.roadrunner.TrajectoryBuilder;
+
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -71,7 +75,7 @@ public abstract class AutoMaster extends LinearOpMode {
     public void runOpMode() {
         bot = new AutoBot(hardwareMap, telemetry, determineStartPose(), loggingOn);
 
-        visionSensor = new VisionSensor(this, alliance);
+//        visionSensor = new VisionSensor(this, alliance);
 
         riggingDirection = determineRiggingDirection();
 
@@ -79,11 +83,19 @@ public abstract class AutoMaster extends LinearOpMode {
 
         parkDirection = determineParkDirection(parkPosition, boardDirection);
 
-        visionSensor.goToPropDetectionMode();
+//        visionSensor.goToPropDetectionMode();
 
         bot.handlerRetract();
         bot.stopLoad();
-
+        TrajectorySequence leftSpikeMark = bot.drivetrain().trajectorySequenceBuilder(reflectY(autoConstants.CLOSE_START))
+                .forward(autoConstants.INITIAL_FORWARD_DIST)
+                .setTangent(Math.toRadians(90))
+                .splineToLinearHeading(reflectY(autoConstants.CLOSE_RIGHT_SPIKE), reflectY(autoConstants.CLOSE_RIGHT_SPIKE).getHeading())
+                .setTangent(Math.toRadians(330))
+                .splineToLinearHeading(reflectY(autoConstants.CLOSE_INITIAL), Math.toRadians(90))
+                .lineToLinearHeading(reflectY(autoConstants.RIGHT_BACKDROP_PRE))
+                .build();
+        /*
         leftSpikeTrajectory = bot.drivetrain().actionBuilder(bot.drivetrain().pose)
                 .lineToYSplineHeading(33, Math.toRadians(0))
                 .waitSeconds(2)
@@ -95,19 +107,19 @@ public abstract class AutoMaster extends LinearOpMode {
                 .turn(Math.toRadians(180))
                 .lineToX(47.5)
                 .waitSeconds(3)
-                .build();
-
+               .build();
+*/
         sleep(500);
         while (!isStarted() && !isStopRequested()) {
-            propDirection = visionSensor.getPropDirection();
-
+ //           propDirection = visionSensor.getPropDirection();
+            propDirection = PropDirection.LEFT;
             telemetry.addData("Prop Position: ", propDirection);
             telemetry.update();
 
             sleep(50);
         }
         if (!isStopRequested()) {
-            visionSensor.goToNoSensingMode();
+ //           visionSensor.goToNoSensingMode();
             selectedTrajectory = determineSelectedTrajectory();
             timer.reset();
 

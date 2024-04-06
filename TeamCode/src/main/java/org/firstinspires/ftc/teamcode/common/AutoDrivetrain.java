@@ -65,14 +65,14 @@ public class AutoDrivetrain extends Drivetrain{
 
         // drive model parameters
         // 94.5 inches took 31928.72 ticks
-        public double inPerTick = 337.87;
-        public double lateralInPerTick = inPerTick;
-        public double trackWidthTicks = 0;
+        public double inPerTick = .0029597;
+        public double lateralInPerTick = .0022186;
+        public double trackWidthTicks = 4850;
 
         // feedforward parameters (in tick units)
-        public double kS = 0;
-        public double kV = 0;
-        public double kA = 0;
+        public double kS = 1.4025;
+        public double kV = 0.00055713;
+        public double kA = 0.0001;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 50;
@@ -84,9 +84,9 @@ public class AutoDrivetrain extends Drivetrain{
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain = 0.0;
-        public double lateralGain = 0.0;
-        public double headingGain = 0.0; // shared with turn
+        public double axialGain = 0.75;
+        public double lateralGain = 5.0;
+        public double headingGain = 7.5; // shared with turn
 
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;
